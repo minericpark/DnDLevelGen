@@ -4,8 +4,8 @@ package epark;
  * DnD DM's Toolkit (Level Generator).
  *
  * @author Eric (Min)seo Park - 1001018
- * @version 3
- * @since October 28th, 2019
+ * @version 4
+ * @since November 13th, 2019
  */
 final class Main {
 
