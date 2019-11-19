@@ -1,0 +1,21 @@
+.root {
+    -fx-background-color: #ffffff;
+    -fx-font-size: 10pt;
+}
+
+.mainText {
+    -fx-padding: 10;
+}
+
+.fileHandler {
+
+}
+
+.editButton {
+    -fx-padding: 10;
+}
+
+.selectMenu {
+    -fx-padding: 10;
+}
+

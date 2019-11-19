@@ -2,12 +2,14 @@ package gui;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 
@@ -26,7 +28,8 @@ public class Gui extends Application {
         theController = new Controller(this);
         primaryStage = givenStage;
         root = setUpRoot();
-        primaryScene = new Scene(root, 500, 475);
+        primaryScene = new Scene(root, 800, 675);
+        root = adjustablePane(root);
         primaryScene.getStylesheets().add((new File("res/dungeon.css")).toURI().toString());
         primaryStage.setTitle("Dungeon Generator 4.0");
         primaryStage.setScene(primaryScene);
@@ -35,6 +38,9 @@ public class Gui extends Application {
 
     private BorderPane setUpRoot() {
         BorderPane temp = new BorderPane();
+        Insets spacing = new Insets(10);
+        HBox chamberView = new HBox(10);
+        chamberView.setAlignment(Pos.CENTER);
         Node topMenu = setUpTopMenu();
         Node editButton = setUpEditButt();
         Node leftMenu = setUpLeftMenu();
@@ -42,14 +48,19 @@ public class Gui extends Application {
         Node rightMenu = setUpAdditionalText();
         temp.setTop(topMenu);
         temp.setBottom(editButton);
-        temp.setLeft(leftMenu);
-        temp.setRight(rightMenu);
-        temp.setCenter(centerDescrip);
+        BorderPane.setMargin(editButton, spacing);
+        chamberView.getChildren().addAll(leftMenu, centerDescrip, rightMenu);
+        temp.setCenter(chamberView);
         return temp;
     }
 
+    private BorderPane adjustablePane(BorderPane givenPane) {
+        givenPane.prefHeightProperty().bind(primaryScene.heightProperty());
+        givenPane.prefWidthProperty().bind(primaryScene.widthProperty());
+        return givenPane;
+    }
+
     private Node setUpTopMenu() {
-        VBox tempBox = new VBox();
         Menu temp = new Menu("File");
         MenuItem saveItem = new MenuItem("Save File");
         MenuItem loadItem = new MenuItem("Load File");
@@ -70,28 +81,22 @@ public class Gui extends Application {
     }
 
     private Node setUpLeftMenu() {
-        VBox tempBox = new VBox();
         MenuBar tempBar = new MenuBar();
         Menu tempMenu = new Menu();
-        ListView<MenuItem> tempList = new ListView<MenuItem>();
+        ListView<String> tempList = new ListView<String>();
         int i;
 
         for (i = 0; i < theController.getMainLevel().getChambers().size(); i++) {
-            MenuItem temp = new MenuItem();
-            temp.setText("Chamber " + (i + 1));
-            temp.setOnAction((ActionEvent event) -> {
-               theController.reactToButton();
-            });
+            String temp = new String();
+            temp = "Chamber " + (i + 1);
             tempList.getItems().add(temp);
         }
         for (i = 0; i < theController.getMainLevel().getPassages().size(); i++) {
-            MenuItem temp = new MenuItem();
-            temp.setText("Passage " + (i + 1));
-            temp.setOnAction((ActionEvent event) -> {
-               theController.reactToButton();
-            });
+            String temp = new String();
+            temp = "Passages " + (i + 1);
             tempList.getItems().add(temp);
         }
+        tempList.getStyleClass().addAll("selectMenu");
 
         return tempList;
     }
@@ -108,7 +113,7 @@ public class Gui extends Application {
     private Node setUpMainText() {
         TextArea temp = new TextArea();
         temp.setText("Blank");
-        temp.setEditable(true);
+        temp.setEditable(false);
         return temp;
     }
 
