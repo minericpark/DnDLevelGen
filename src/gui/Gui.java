@@ -1,6 +1,10 @@
 package gui;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,6 +18,7 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class Gui extends Application {
 
@@ -22,6 +27,7 @@ public class Gui extends Application {
     private Popup descriptionPane;
     private Stage primaryStage;
     private Scene primaryScene;
+    private TextArea primaryText;
 
     @Override
     public void start(Stage givenStage) throws Exception {
@@ -44,12 +50,11 @@ public class Gui extends Application {
         Node topMenu = setUpTopMenu();
         Node editButton = setUpEditButt();
         Node leftMenu = setUpLeftMenu();
-        Node centerDescrip = setUpMainText();
+        primaryText = setUpMainText();
         Node rightMenu = setUpAdditionalText();
         temp.setTop(topMenu);
         temp.setBottom(editButton);
-        BorderPane.setMargin(editButton, spacing);
-        chamberView.getChildren().addAll(leftMenu, centerDescrip, rightMenu);
+        chamberView.getChildren().addAll(leftMenu, primaryText, rightMenu);
         temp.setCenter(chamberView);
         return temp;
     }
@@ -67,10 +72,10 @@ public class Gui extends Application {
         MenuBar tempBar = new MenuBar();
 
         saveItem.setOnAction((ActionEvent event) -> {
-            theController.reactToButton();
+            theController.reactToFileSave();
         });
         loadItem.setOnAction((ActionEvent event) -> {
-            theController.reactToButton();
+            theController.reactToFileLoad();
         });
 
         temp.getItems().add(saveItem);
@@ -83,36 +88,50 @@ public class Gui extends Application {
     private Node setUpLeftMenu() {
         MenuBar tempBar = new MenuBar();
         Menu tempMenu = new Menu();
-        ListView<String> tempList = new ListView<String>();
+        ObservableList<String> observeList;
+        ListView<String> viewList;
+        ArrayList<String> tempList = new ArrayList<String>();
         int i;
 
         for (i = 0; i < theController.getMainLevel().getChambers().size(); i++) {
             String temp = new String();
             temp = "Chamber " + (i + 1);
-            tempList.getItems().add(temp);
+            tempList.add(temp);
         }
         for (i = 0; i < theController.getMainLevel().getPassages().size(); i++) {
             String temp = new String();
             temp = "Passages " + (i + 1);
-            tempList.getItems().add(temp);
+            tempList.add(temp);
         }
-        tempList.getStyleClass().addAll("selectMenu");
 
-        return tempList;
+        observeList = FXCollections.<String>observableArrayList(tempList);
+        viewList = new ListView<>(observeList);
+
+        viewList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                primaryText.setText(theController.reactToDescripChange(t1));
+            }
+        });
+
+        viewList.getStyleClass().addAll("selectMenu");
+
+        return viewList;
     }
 
     private Node setUpEditButt() {
         Button temp = new Button();
         temp.setText("Edit");
         temp.setOnAction((ActionEvent event) -> {
-           theController.reactToButton();
+           theController.reactToEditButton();
         });
         return temp;
     }
 
-    private Node setUpMainText() {
+    private TextArea setUpMainText() {
         TextArea temp = new TextArea();
-        temp.setText("Blank");
+        temp.setText("Welcome to Dungeon Generator 4.0!\n" + "A level has already been generated for you\n"
+                + "Please select a passage or chamber on the left tab to display it's description");
         temp.setEditable(false);
         return temp;
     }
