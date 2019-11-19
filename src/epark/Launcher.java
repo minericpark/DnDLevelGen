@@ -11,7 +11,7 @@ final class Launcher {
 
     private Launcher() {
     }
-    
+
     /**
      * Main method of program.
      * @param args arguments provided when program is initiated
