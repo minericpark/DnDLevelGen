@@ -1,4 +1,4 @@
-package epark;
+package gui;
 
 /**
  * DnD DM's Toolkit (Level Generator).

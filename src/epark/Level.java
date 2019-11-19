@@ -359,6 +359,24 @@ public class Level {
     }
 
     /**
+     * Returns all passages in level.
+     *
+     * @return levelPassages all passages of level
+     */
+    public ArrayList<Passage> getPassages() {
+        return levelPassages;
+    }
+
+    /**
+     * Returns all chambers in level.
+     *
+     * @return levelChambers all chambers of level
+     */
+    public ArrayList<Chamber> getChambers() {
+        return levelChambers;
+    }
+
+    /**
      * Returns the description of the entire level.
      *
      * @return levelDescription entire description of level
