@@ -1,5 +1,7 @@
 package gui;
 
+import epark.Door;
+import epark.Space;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -28,7 +30,7 @@ public class Gui extends Application {
     private Stage primaryStage;
     private Scene primaryScene;
     private TextArea primaryText;
-    private ComboBox primaryDoors;
+    private TilePane primaryDoors;
 
     @Override
     public void start(Stage givenStage) throws Exception {
@@ -52,10 +54,10 @@ public class Gui extends Application {
         Node editButton = setUpEditButt();
         Node leftMenu = setUpLeftMenu();
         primaryText = setUpMainText();
-        Node rightMenu = setUpAdditionalText();
+        primaryDoors = setUpAdditionalText();
         temp.setTop(topMenu);
         temp.setBottom(editButton);
-        chamberView.getChildren().addAll(leftMenu, primaryText, rightMenu);
+        chamberView.getChildren().addAll(leftMenu, primaryText, primaryDoors);
         temp.setCenter(chamberView);
         return temp;
     }
@@ -105,15 +107,15 @@ public class Gui extends Application {
             tempList.add(temp);
         }
 
-        observeList = FXCollections.<String>observableArrayList(tempList);
+        observeList = FXCollections.observableArrayList(tempList);
         viewList = new ListView<>(observeList);
 
         viewList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                primaryText.setText(theController.reactToDescripChange(t1));
+                primaryText.setText(theController.getSpaceDescrip(t1));
                 /*Change dropdown*/
-                updateComboBox(t1);
+                primaryDoors = new TilePane(updateComboBox(t1));
             }
         });
 
@@ -139,7 +141,7 @@ public class Gui extends Application {
         return temp;
     }
 
-    private Node setUpAdditionalText() {
+    private TilePane setUpAdditionalText() {
         TilePane tempPane = new TilePane();
         Label boxName = new Label("List of doors");
         String allDoors;
@@ -151,8 +153,29 @@ public class Gui extends Application {
         return tempPane;
     }
 
-    private void updateComboBox() {
+    private ComboBox<String> updateComboBox(String newChamber) {
+        ArrayList<String> tempList = new ArrayList<>();
+        ObservableList<String> observeList;
+        ArrayList<Door> doorAvailable = theController.getSpaceDoors(newChamber);
+        ComboBox tempBox;
+        int i;
 
+        for (i = 0; i < doorAvailable.size(); i++) {
+            String temp;
+            temp = "Door " + (i + 1);
+            tempList.add(temp);
+        }
+        observeList = FXCollections.observableArrayList(tempList);
+        tempBox = new ComboBox<>(observeList);
+
+        tempBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                theController.reactToEditButton();
+            }
+        });
+
+        return tempBox;
     }
 
     /**

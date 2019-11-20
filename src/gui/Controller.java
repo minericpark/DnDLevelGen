@@ -1,5 +1,6 @@
 package gui;
 
+import epark.Door;
 import epark.Level;
 import epark.Space;
 
@@ -42,9 +43,10 @@ public class Controller {
 
     /**
      * Event handles a description change request.
-     * @param newChamber string of chamber selected
+     * @param newChamber string of space selected
+     * @return textString string description of space returned
      */
-    public String reactToDescripChange(String newChamber) {
+    public String getSpaceDescrip(String newChamber) {
         int index;
         String textString;
         /*System.out.println("Description change");
@@ -59,6 +61,23 @@ public class Controller {
             textString = mainLevel.getPassages().get(index - 1).getDescription();
         }
         return textString;
+    }
+
+    /**
+     * Event handles a space change request and returns specified space.
+     * @param newChamber string of space selected
+     * @return mainLevel.getChambers()/getPassages().get(index - 1) returns space that is currently being displayed
+     */
+    public ArrayList<Door> getSpaceDoors(String newChamber) {
+        int index;
+        Space foundSpace;
+
+        index = Integer.parseInt(newChamber.replaceAll("\\D", ""));
+        if (newChamber.contains("Chamber")) {
+            return mainLevel.getChambers().get(index - 1).getDoors();
+        } else {
+            return mainLevel.getPassages().get(index - 1).getDoors();
+        }
     }
 
     /**
