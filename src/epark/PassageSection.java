@@ -84,9 +84,9 @@ public class PassageSection {
         if (monsterExist) {
             this.passageDescription = this.passageDescription.concat(getMonsterDescrip());
         }
-        if (doorExist) {
+        /*if (doorExist) {
             this.passageDescription = this.passageDescription.concat(indentString("Passage Door ID: " + this.passageDoor.getDescription()));
-        }
+        }*/
     }
 
     /**

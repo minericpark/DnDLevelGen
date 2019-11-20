@@ -28,6 +28,7 @@ public class Gui extends Application {
     private Stage primaryStage;
     private Scene primaryScene;
     private TextArea primaryText;
+    private ComboBox primaryDoors;
 
     @Override
     public void start(Stage givenStage) throws Exception {
@@ -94,12 +95,12 @@ public class Gui extends Application {
         int i;
 
         for (i = 0; i < theController.getMainLevel().getChambers().size(); i++) {
-            String temp = new String();
+            String temp;
             temp = "Chamber " + (i + 1);
             tempList.add(temp);
         }
         for (i = 0; i < theController.getMainLevel().getPassages().size(); i++) {
-            String temp = new String();
+            String temp;
             temp = "Passages " + (i + 1);
             tempList.add(temp);
         }
@@ -111,6 +112,8 @@ public class Gui extends Application {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 primaryText.setText(theController.reactToDescripChange(t1));
+                /*Change dropdown*/
+                updateComboBox(t1);
             }
         });
 
@@ -146,6 +149,10 @@ public class Gui extends Application {
         tempPane = new TilePane(temp);
 
         return tempPane;
+    }
+
+    private void updateComboBox() {
+
     }
 
     /**

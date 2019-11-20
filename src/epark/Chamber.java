@@ -275,7 +275,7 @@ public class Chamber extends epark.Space {
     private void setUpDescription() {
         this.chambDescrip = this.getSizeDescrip();
         this.chambDescrip = this.chambDescrip.concat(getContents());
-        this.chambDescrip = this.chambDescrip.concat(getDoorDescrip());
+        /*this.chambDescrip = this.chambDescrip.concat(getDoorDescrip());*/
     }
 
     /**
