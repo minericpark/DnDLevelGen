@@ -304,6 +304,23 @@ public class Chamber extends epark.Space implements java.io.Serializable {
     }
 
     /**
+     * Adds monster imported from inputs of gui.
+     *
+     * @param indexNum number of monster type specified
+     * @return 0-1, true of false dependent on if action has succeeded
+     */
+    public int addMonGui(int indexNum) {
+        Monster newMonster = new Monster();
+        if (indexNum < 1 || indexNum > 100) {
+            return 0; /*Fail*/
+        } else {
+            newMonster.setType(indexNum);
+            addMonster(newMonster);
+            return 1;
+        }
+    }
+
+    /**
      * Adds imported monster into arraylist of monsters for chamber.
      *
      * @param theMonster new monster imported to add into list of monsters of chamber
@@ -313,12 +330,81 @@ public class Chamber extends epark.Space implements java.io.Serializable {
     }
 
     /**
+     * Removes monster imported from inputs of gui.
+     *
+     * @param indexNum specified monster index number
+     * @return 0-1, true or false dependent on if action has succeeded
+     */
+    public int removeMonGui(int indexNum) {
+        int actualIndex = indexNum - 1;
+        if (chambMonsters.size() > actualIndex) {
+            removeMonster(actualIndex);
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Removes requested monster from arraylist of monsters for chamber.
+     *
+     * @param indexNum index number of monster within arraylist to remove
+     */
+    public void removeMonster(int indexNum) {
+        this.chambMonsters.remove(indexNum);
+    }
+
+    /**
+     * Adds treasure imported from inputs of gui.
+     *
+     * @param indexNum index of treasure type specified
+     * @param containNum index number of treasure's container
+     * @return 0-1, true of false dependent on if action has succeeded
+     */
+    public int addTreasGui(int indexNum, int containNum) {
+        Treasure newTreasure = new Treasure();
+        if (indexNum < 1 || indexNum > 100) {
+            return 0; /*Fail*/
+        } else {
+            newTreasure.setDescription(indexNum);
+            newTreasure.setContainer(containNum);
+            addTreasure(newTreasure);
+            return 1;
+        }
+    }
+
+    /**
      * Adds imported treasure into arraylist of treasures for chamber.
      *
      * @param theTreasure new treasure imported to add into list of treasures of chamber
      */
     public void addTreasure(Treasure theTreasure) {
         this.chambTreasures.add(theTreasure);
+    }
+
+    /**
+     * Removes Treasure imported from inputs of gui.
+     *
+     * @param indexNum specified treasure index number
+     * @return 0-1, true or false dependent on if action has succeeded
+     */
+    public int removeTreasGui(int indexNum) {
+        int actualIndex = indexNum - 1;
+        if (chambTreasures.size() > actualIndex) {
+            removeTreasure(actualIndex);
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Removes treasure specified at index number for chamber.
+     *
+     * @param indexNum index number of treasure within arraylist to remove
+     */
+    public void removeTreasure(int indexNum) {
+        this.chambTreasures.remove(indexNum);
     }
 
     /**
@@ -450,8 +536,8 @@ public class Chamber extends epark.Space implements java.io.Serializable {
                 } catch (NotProtectedException e) { //Catch statement catches any NotProtectedExceptions
                     protectStatus = "nothing";
                 }
-                treasureDescrip = treasureDescrip.concat(indentString("The treasure is contained in " + this.chambTreasures.get(i).getContainer() + " and holds " + this.chambTreasures.get(i).getDescription() + ".\n"));
-                treasureDescrip = treasureDescrip.concat(indentString("The treasure is guarded by " + protectStatus + ".\n"));
+                treasureDescrip = treasureDescrip.concat(indentString((i + 1) + ". The treasure is contained in " + this.chambTreasures.get(i).getContainer() + " and holds " + this.chambTreasures.get(i).getDescription() + ".\n"));
+                treasureDescrip = treasureDescrip.concat(indentString("It is guarded by " + protectStatus + ".\n"));
             }
         }
         return treasureDescrip;
@@ -469,8 +555,8 @@ public class Chamber extends epark.Space implements java.io.Serializable {
         if (this.chambMonsters.size() > 0) {
             monsterDescrip = monsterDescrip.concat("There is/are " + this.chambMonsters.size() + " potential monsters/types of monsters within the chamber.\n");
             for (i = 0; i < this.chambMonsters.size(); i++) {
-                monsterDescrip = monsterDescrip.concat(indentString("The monster is/are a " + this.chambMonsters.get(i).getDescription() + "\n"));
-                monsterDescrip = monsterDescrip.concat(indentString("The amount of monsters potentially spawning is: " + this.chambMonsters.get(i).getMinNum() + " to " + this.chambMonsters.get(i).getMaxNum() + "\n"));
+                monsterDescrip = monsterDescrip.concat(indentString((i + 1) + ". The monster is/are a " + this.chambMonsters.get(i).getDescription() + "\n"));
+                monsterDescrip = monsterDescrip.concat(indentString("The amount of monsters of this type potentially spawning is: " + this.chambMonsters.get(i).getMinNum() + " to " + this.chambMonsters.get(i).getMaxNum() + "\n"));
             }
         }
         return monsterDescrip;

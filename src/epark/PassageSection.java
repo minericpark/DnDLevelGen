@@ -263,6 +263,23 @@ public class PassageSection implements java.io.Serializable {
     }
 
     /**
+     * Adds monster imported from inputs of gui.
+     *
+     * @param indexNum number of monster type specified
+     * @return 0-1, true of false dependent on if action has succeeded
+     */
+    public int addMonGui(int indexNum) {
+        Monster newMonster = new Monster();
+        if (indexNum < 1 || indexNum > 100) {
+            return 0; /*Fail*/
+        } else {
+            newMonster.setType(indexNum);
+            addMonster(newMonster);
+            return 1;
+        }
+    }
+
+    /**
      * Adds new monsters to passagesection.
      *
      * @param newMonster new monster within passage section
@@ -274,6 +291,54 @@ public class PassageSection implements java.io.Serializable {
     }
 
     /**
+     * Removes monster imported from inputs of gui.
+     *
+     * @param indexNum specified monster index number
+     * @return 0-1, true or false dependent on if action has succeeded
+     */
+    public int removeMonGui(int indexNum) {
+        int actualIndex = indexNum - 1;
+        if (passageMonsters.size() > actualIndex) {
+            removeMonster(actualIndex);
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Removes requested monster from arraylist of monsters for chamber.
+     *
+     * @param indexNum index number of monster within arraylist to remove
+     */
+    public void removeMonster(int indexNum) {
+        this.passageMonsters.remove(indexNum);
+        if (passageMonsters.size() == 0) {
+            this.monsterExist = false;
+        }
+        this.updateDescription();
+    }
+
+    /**
+     * Adds treasure imported from inputs of gui.
+     *
+     * @param indexNum index of treasure type specified
+     * @param containNum index number of treasure's container
+     * @return 0-1, true of false dependent on if action has succeeded
+     */
+    public int addTreasGui(int indexNum, int containNum) {
+        Treasure newTreasure = new Treasure();
+        if (indexNum < 1 || indexNum > 100) {
+            return 0; /*Fail*/
+        } else {
+            newTreasure.setDescription(indexNum);
+            newTreasure.setContainer(containNum);
+            addTreasure(newTreasure);
+            return 1;
+        }
+    }
+
+    /**
      * Adds new treasure to passagesection.
      *
      * @param newTreasure new treasure within passage section
@@ -281,6 +346,35 @@ public class PassageSection implements java.io.Serializable {
     public void addTreasure(Treasure newTreasure) {
         this.passageTreasures.add(newTreasure);
         this.treasureExist = true;
+        this.updateDescription();
+    }
+
+    /**
+     * Removes Treasure imported from inputs of gui.
+     *
+     * @param indexNum specified treasure index number
+     * @return 0-1, true or false dependent on if action has succeeded
+     */
+    public int removeTreasGui(int indexNum) {
+        int actualIndex = indexNum - 1;
+        if (passageTreasures.size() > actualIndex) {
+            removeTreasure(actualIndex);
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Removes treasure specified at index number for passage section.
+     *
+     * @param indexNum index number of treasure within arraylist to remove
+     */
+    public void removeTreasure(int indexNum) {
+        this.passageTreasures.remove(indexNum);
+        if (passageTreasures.size() == 0) {
+            this.treasureExist = false;
+        }
         this.updateDescription();
     }
 

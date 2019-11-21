@@ -34,6 +34,7 @@ public class Gui extends Application {
     private Scene primaryScene;
     private TextArea primaryText;
     private ComboBox<String> primaryDoors;
+    private Button editButton;
 
     /**
      * Initializes all Gui instances.
@@ -63,7 +64,7 @@ public class Gui extends Application {
         HBox chamberView = new HBox(10);
         chamberView.setAlignment(Pos.CENTER);
         Node topMenu = setUpTopMenu();
-        Node editButton = setUpEditButt();
+        editButton = setUpEditButt();
         Node leftMenu = setUpLeftMenu();
         primaryText = setUpMainText();
         primaryDoors = setUpAdditionalText();
@@ -151,7 +152,7 @@ public class Gui extends Application {
      * Creates initial edit button.
      * @return temp a plain edit button
      */
-    private Node setUpEditButt() {
+    private Button setUpEditButt() {
         Button temp = new Button();
         temp.setText("Edit");
         temp.setOnAction((ActionEvent event) -> {
@@ -189,6 +190,14 @@ public class Gui extends Application {
     }
 
     /**
+     * Sets door popup of gui.
+     * @param newPane new popup to replace main popup of gui
+     * */
+    public void setDescriptionPane(Popup newPane) {
+        descriptionPane = newPane;
+    }
+
+    /**
      * Returns primary text of gui.
      * @return primaryText global variable that controls main text area of gui
      */
@@ -221,11 +230,19 @@ public class Gui extends Application {
     }
 
     /**
-     * Sets door popup of gui.
-     * @param newPane new popup to replace main popup of gui
-     * */
-    public void setDescriptionPane(Popup newPane) {
-        descriptionPane = newPane;
+     * Returns edit button of gui.
+     * @return editButton global variable that controls edit button of gui
+     */
+    public Button getEditButton() {
+        return editButton;
+    }
+
+    /**
+     * Returns combobox (doorlist) of gui.
+     * @return primaryDoors global variable that controls doorlist of gui
+     */
+    public BorderPane getRoot() {
+        return root;
     }
 
     /**

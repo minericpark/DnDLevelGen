@@ -6,11 +6,17 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
+import javafx.stage.Stage;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -48,15 +54,17 @@ public class Controller {
         mainGui.getPrimaryText().setText(getSpaceDescrip(newSpace));
         /*Change dropdown*/
         updateComboBox(newSpace);
+        updateEditButton(newSpace);
     }
 
     /**
      * Event handles changes to the list of doors when the selected space changes.
      * @param newSpace name of new space
+     * @param newDoor name of new door
      */
-    public void reactToBoxChange(String newSpace) {
+    public void reactToBoxChange(String newSpace, String newDoor) {
         if (newSpace != null) {
-            mainGui.setDescriptionPane(popUpDoor(getDoorDescrip(newSpace, newSpace)));
+            mainGui.setDescriptionPane(popUpDoor(getDoorDescrip(newSpace, newDoor)));
             if (mainGui.getDescriptionPane().isShowing()) {
                 mainGui.getDescriptionPane().hide();
             } else {
@@ -113,7 +121,21 @@ public class Controller {
         ArrayList<String> tempList = new ArrayList<>();
         ObservableList<String> observeList;
         int i;
+        ChangeListener<String> listener = new ChangeListener<>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                if (mainGui.getDoorCombo().getValue() != null) {
+                    reactToBoxChange(newSpace, t1);
+                    System.out.println(newSpace);
+                    System.out.println(t1);
+                } else {
+                    mainGui.getDoorCombo().getSelectionModel().selectedItemProperty().removeListener(this);
+                }
+            }
+        };
 
+        System.out.println("combobox updated");
+        mainGui.getDoorCombo().getSelectionModel().clearSelection();
         mainGui.getDoorCombo().setItems(null);
         for (i = 0; i < getNumDoors(newSpace); i++) {
             String temp;
@@ -122,12 +144,46 @@ public class Controller {
         }
         observeList = FXCollections.observableArrayList(tempList);
         mainGui.getDoorCombo().setItems(observeList);
-        mainGui.getDoorCombo().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                reactToBoxChange(t1);
-            }
+        mainGui.getDoorCombo().getSelectionModel().selectedItemProperty().addListener(listener);
+    }
+
+    private void updateEditButton(String newSpace) {
+        Button temp = new Button();
+        temp.setText("Edit");
+        temp.setOnAction((ActionEvent event) -> {
+            reactToEditButton();
+        });/*
+        mainGui.getEditButton() = temp;*/
+    }
+
+    private Popup popUpEdit() {
+        Stage newPop = new Stage();
+        Popup editPop = new Popup();
+        return null;
+    }
+
+    private Popup popUpMonsterEdit() {
+        Stage newPop = new Stage();
+        Popup editPop = new Popup();
+        Button addButton = new Button();
+        Button removeButton = new Button();
+        TextField monsterIndex = new TextField(); /*Remove*/
+        TextField monsterType = new TextField(); /*Add type*/
+
+        FlowPane newPane = new FlowPane();
+
+        monsterIndex.setPromptText("Enter monster index of existing monster");
+        monsterType.setPromptText("Enter monster type from 1-100");
+
+        addButton.setText("Add Monster");
+        addButton.setOnAction((ActionEvent event) -> {
+           /*React to add monster*/
         });
+        removeButton.setText("Remove Monster");
+        removeButton.setOnAction((ActionEvent event) -> {
+           /*React to remove monster*/
+        });
+        return null;
     }
 
     /**
