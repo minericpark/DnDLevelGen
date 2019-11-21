@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
@@ -108,6 +109,7 @@ public class Controller {
     }
 
     private void updateComboBox(String newSpace) {
+        ComboBox<String> tempBox = new ComboBox<>();
         ArrayList<String> tempList = new ArrayList<>();
         ObservableList<String> observeList;
         int i;

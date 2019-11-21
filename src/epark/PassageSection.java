@@ -2,8 +2,11 @@ package epark;
 
 import dnd.die.D20;
 import dnd.die.Percentile;
+import dnd.exceptions.NotProtectedException;
 import dnd.models.Monster;
+import dnd.models.Treasure;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /* Represents a 10 ft section of passageway */
@@ -23,9 +26,13 @@ public class PassageSection implements java.io.Serializable {
      */
     private HashMap<Integer, String> passageTable;
     /**
-     * Represents monster within passage section (if it exists).
+     * Represents monsters within passage section (if it exists).
      */
-    private Monster passageMonster;
+    private ArrayList<Monster> passageMonsters;
+    /**
+     * Represents treasures within passage section (if it exists).
+     */
+    private ArrayList<Treasure> passageTreasures;
     /**
      * Represents the door of the passage section (if it exists).
      */
@@ -34,6 +41,10 @@ public class PassageSection implements java.io.Serializable {
      * Represents the boolean on whether monster exists within the passage section or not.
      */
     private boolean monsterExist;
+    /**
+     * Represents the boolean on whether treasure exists within the passage section or not.
+     */
+    private boolean treasureExist;
     /**
      * Represents the boolean on whether door exists within the passage section or not.
      */
@@ -53,6 +64,8 @@ public class PassageSection implements java.io.Serializable {
      */
     public PassageSection() {
         passageTable = new HashMap<Integer, String>();
+        passageMonsters = new ArrayList<Monster>();
+        passageTreasures = new ArrayList<Treasure>();
         this.passageDescription = "";
         this.setUpDescription(" ");
         this.genContents();
@@ -69,6 +82,8 @@ public class PassageSection implements java.io.Serializable {
         //sets up a specific passage based on the values sent in from
         //modified table 1
         passageTable = new HashMap<Integer, String>();
+        passageMonsters = new ArrayList<Monster>();
+        passageTreasures = new ArrayList<Treasure>();
         this.passageDescription = "";
         this.setUpDescription(description);
         this.genContents();
@@ -83,6 +98,9 @@ public class PassageSection implements java.io.Serializable {
         passageDescription = tempDescription;
         if (monsterExist) {
             this.passageDescription = this.passageDescription.concat(getMonsterDescrip());
+        }
+        if (treasureExist) {
+            this.passageDescription = this.passageDescription.concat(getTreasureDescrip());
         }
         /*if (doorExist) {
             this.passageDescription = this.passageDescription.concat(indentString("Passage Door ID: " + this.passageDoor.getDescription()));
@@ -144,7 +162,7 @@ public class PassageSection implements java.io.Serializable {
 
         this.setMonsterExist(true);
         generatedMonster.setType(rollD100());
-        this.passageMonster = generatedMonster;
+        this.passageMonsters.add(generatedMonster);
     }
 
     /**
@@ -245,13 +263,24 @@ public class PassageSection implements java.io.Serializable {
     }
 
     /**
-     * Updates/sets current passage section monster to newMonster.
+     * Adds new monsters to passagesection.
      *
-     * @param newMonster new monster that is to replace current/null monster field within passage section
+     * @param newMonster new monster within passage section
      */
-    public void updateMonster(Monster newMonster) {
-        this.passageMonster = newMonster;
+    public void addMonster(Monster newMonster) {
+        this.passageMonsters.add(newMonster);
         this.monsterExist = true;
+        this.updateDescription();
+    }
+
+    /**
+     * Adds new treasure to passagesection.
+     *
+     * @param newTreasure new treasure within passage section
+     */
+    public void addTreasure(Treasure newTreasure) {
+        this.passageTreasures.add(newTreasure);
+        this.treasureExist = true;
         this.updateDescription();
     }
 
@@ -279,11 +308,21 @@ public class PassageSection implements java.io.Serializable {
     /**
      * Returns monster of passage section.
      *
+     * @param num specified monster
      * @return passageMonster monster generated in passage section
      */
-    public Monster getMonster() {
+    public Monster getMonster(int num) {
         //returns the monster that is in the passage section, if there is one
-        return this.passageMonster;
+        return this.passageMonsters.get(num);
+    }
+
+    /**
+     * Returns all monsters of passage section.
+     *
+     * @return passageMonster monster generated in passage section
+     */
+    public ArrayList<Monster> getMonsters() {
+        return this.passageMonsters;
     }
 
     /**
@@ -292,12 +331,46 @@ public class PassageSection implements java.io.Serializable {
      * @return monsterDescrip description of monster within passage section
      */
     private String getMonsterDescrip() {
-        String monsterDescrip;
+        String monsterDescrip = "";
+        int i;
 
-        monsterDescrip = indentString("The monster is/are a " + passageMonster.getDescription() + "\n");
-        monsterDescrip = monsterDescrip.concat(indentString("The amount of monsters potentially spawning is: " + passageMonster.getMinNum() + " to " + passageMonster.getMaxNum() + "\n"));
-
+        if (this.passageMonsters.size() > 0) {
+            monsterDescrip = monsterDescrip.concat("There is/are " + this.passageMonsters.size() + " potential monsters/types of monsters within the chamber.\n");
+            for (i = 0; i < this.passageMonsters.size(); i++) {
+                monsterDescrip = monsterDescrip.concat(indentString("The monster is/are a " + this.passageMonsters.get(i).getDescription() + "\n"));
+                monsterDescrip = monsterDescrip.concat(indentString("The amount of monsters potentially spawning is: " + this.passageMonsters.get(i).getMinNum() + " to " + this.passageMonsters.get(i).getMaxNum() + "\n"));
+            }
+        }
         return monsterDescrip;
+    }
+
+    /**
+     * Returns the string description of the treasure of chamber.
+     *
+     * @return treasureDescrip string description of treasures of chamber
+     */
+    private String getTreasureDescrip() {
+        String protectStatus;
+        String treasureDescrip = "";
+        int i;
+
+        if (this.passageTreasures.size() > 0) {
+            treasureDescrip = treasureDescrip.concat("There is/are " + this.passageTreasures.size() + " potential treasures/types of treasures within the chamber.\n");
+            for (i = 0; i < this.passageTreasures.size(); i++) {
+                try { //Try statement checks whether generatedReward.getProtection() is null or not
+                    if (this.passageTreasures.get(i).getProtection() != null) {
+                        protectStatus = this.passageTreasures.get(i).getProtection();
+                    } else {
+                        protectStatus = "nothing";
+                    }
+                } catch (NotProtectedException e) { //Catch statement catches any NotProtectedExceptions
+                    protectStatus = "nothing";
+                }
+                treasureDescrip = treasureDescrip.concat(indentString("The treasure is contained in " + this.passageTreasures.get(i).getContainer() + " and holds " + this.passageTreasures.get(i).getDescription() + ".\n"));
+                treasureDescrip = treasureDescrip.concat(indentString("The treasure is guarded by " + protectStatus + ".\n"));
+            }
+        }
+        return treasureDescrip;
     }
 
     /**

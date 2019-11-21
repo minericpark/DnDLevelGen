@@ -112,7 +112,7 @@ public class Passage extends epark.Space implements java.io.Serializable {
      */
     public void addMonster(Monster newMonster, int i) {
         // adds a monster to section 'i' of the passage
-        this.thePassage.get(i).updateMonster(newMonster);
+        this.thePassage.get(i).addMonster(newMonster);
         this.updateDescription();
     }
 
@@ -177,14 +177,14 @@ public class Passage extends epark.Space implements java.io.Serializable {
     }
 
     /**
-     * Returns monster at passage section i.
+     * Returns monsters at passage section i.
      *
      * @param i number representing which passage section to get monster from
      * @return thePassage.get(i).getMonster(); command that calls the monster of the specified passage section
      */
-    public Monster getMonster(int i) {
+    public ArrayList<Monster> getMonsters(int i) {
         //returns Monster door in section 'i'. If there is no Monster, returns null
-        return this.thePassage.get(i).getMonster();
+        return this.thePassage.get(i).getMonsters();
     }
 
     /**

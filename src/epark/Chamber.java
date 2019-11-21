@@ -435,21 +435,25 @@ public class Chamber extends epark.Space implements java.io.Serializable {
      */
     private String getTreasureDescrip() {
         String protectStatus;
-        String treasureDescrip;
+        String treasureDescrip = "";
+        int i;
 
-        //This try + catch statement is weird. Try to figure out a change
-        try { //Try statement checks whether generatedReward.getProtection() is null or not
-            if (this.chambTreasures.get(0).getProtection() != null) {
-                protectStatus = this.chambTreasures.get(0).getProtection();
-            } else {
-                protectStatus = "nothing";
+        if (this.chambTreasures.size() > 0) {
+            treasureDescrip = treasureDescrip.concat("There is/are " + this.chambTreasures.size() + " potential treasures/types of treasures within the chamber.\n");
+            for (i = 0; i < this.chambTreasures.size(); i++) {
+                try { //Try statement checks whether generatedReward.getProtection() is null or not
+                    if (this.chambTreasures.get(i).getProtection() != null) {
+                        protectStatus = this.chambTreasures.get(i).getProtection();
+                    } else {
+                        protectStatus = "nothing";
+                    }
+                } catch (NotProtectedException e) { //Catch statement catches any NotProtectedExceptions
+                    protectStatus = "nothing";
+                }
+                treasureDescrip = treasureDescrip.concat(indentString("The treasure is contained in " + this.chambTreasures.get(i).getContainer() + " and holds " + this.chambTreasures.get(i).getDescription() + ".\n"));
+                treasureDescrip = treasureDescrip.concat(indentString("The treasure is guarded by " + protectStatus + ".\n"));
             }
-        } catch (NotProtectedException e) { //Catch statement catches any NotProtectedExceptions
-            protectStatus = "nothing";
         }
-        treasureDescrip = "The treasure is contained in " + this.chambTreasures.get(0).getContainer() + " and holds " + this.chambTreasures.get(0).getDescription() + ".\n";
-        treasureDescrip = treasureDescrip.concat("The treasure is guarded by " + protectStatus + ".\n");
-
         return treasureDescrip;
     }
 
@@ -459,11 +463,16 @@ public class Chamber extends epark.Space implements java.io.Serializable {
      * @return monsterDescrip string description of monster of chamber
      */
     private String getMonsterDescrip() {
-        String monsterDescrip;
+        String monsterDescrip = "";
+        int i;
 
-        monsterDescrip = "The monster is/are a " + this.chambMonsters.get(0).getDescription() + "\n";
-        monsterDescrip = monsterDescrip.concat("The amount of monsters potentially spawning is: " + this.chambMonsters.get(0).getMinNum() + " to " + this.chambMonsters.get(0).getMaxNum() + "\n");
-
+        if (this.chambMonsters.size() > 0) {
+            monsterDescrip = monsterDescrip.concat("There is/are " + this.chambMonsters.size() + " potential monsters/types of monsters within the chamber.\n");
+            for (i = 0; i < this.chambMonsters.size(); i++) {
+                monsterDescrip = monsterDescrip.concat(indentString("The monster is/are a " + this.chambMonsters.get(i).getDescription() + "\n"));
+                monsterDescrip = monsterDescrip.concat(indentString("The amount of monsters potentially spawning is: " + this.chambMonsters.get(i).getMinNum() + " to " + this.chambMonsters.get(i).getMaxNum() + "\n"));
+            }
+        }
         return monsterDescrip;
     }
 
