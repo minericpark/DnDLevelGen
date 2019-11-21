@@ -15,7 +15,7 @@ import dnd.models.Exit;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Chamber extends epark.Space {
+public class Chamber extends epark.Space implements java.io.Serializable {
 
     /**
      * Represents the chamber contents of the chamber.

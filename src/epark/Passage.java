@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-public class Passage extends epark.Space {
+public class Passage extends epark.Space implements java.io.Serializable {
 
     /**
      * Represents the list of passage sections composed for the passage.

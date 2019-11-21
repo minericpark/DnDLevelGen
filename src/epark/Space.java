@@ -1,6 +1,6 @@
 package epark;
 
-public abstract class Space {
+public abstract class Space implements java.io.Serializable {
     /**
      * Returns description of space.
      *

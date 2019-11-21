@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
-public class Level {
+public class Level implements java.io.Serializable {
 
     /**
      * Represents the hashmap of all doors and their connections.

@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 /* Represents a 10 ft section of passageway */
 
-public class PassageSection {
+public class PassageSection implements java.io.Serializable {
 
     /**
      * Represents the description of the passage section.
