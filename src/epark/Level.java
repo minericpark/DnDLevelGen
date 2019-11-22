@@ -84,6 +84,28 @@ public class Level implements java.io.Serializable {
     }
 
     /**
+     * Returns index of chamber that door leads to.
+     * @param givenDoor provided door to retrieve target chamber from
+     * @return indexNum index number of chamber that door leads to
+     */
+    public int nextSpaceIndex(Door givenDoor) {
+        Chamber tempChamb = new Chamber();
+        Door tempDoor = new Door();
+        int i;
+        int indexNum = 0;
+        String spaceNum;
+        tempDoor = doorMatch.get(givenDoor);
+        tempChamb = doorConnection.get(tempDoor);
+        tempChamb.getID();
+        for (i = 0; i < levelChambers.size(); i++) {
+            if (levelChambers.get(i).getID() == tempChamb.getID()) {
+                indexNum = i;
+            }
+        }
+        return (indexNum + 1);
+    }
+
+    /**
      * Sets up mini level appropriately by calling all create methods.
      */
     private void genMiniLevel() {

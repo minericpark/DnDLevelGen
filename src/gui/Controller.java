@@ -37,6 +37,7 @@ public class Controller {
     public Controller(Gui givenGui) {
         mainGui = givenGui;
         mainLevel = new Level();
+        /*System.out.println (mainLevel.getDescription());*/
     }
 
     /**
@@ -127,8 +128,6 @@ public class Controller {
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 if (mainGui.getDoorCombo().getValue() != null && t1 != null && newSpace.equals(mainGui.getCurrentSpace())) {
                     reactToBoxChange(newSpace, t1);
-                    System.out.println(newSpace);
-                    System.out.println(t1);
                 } else {
                     mainGui.getDoorCombo().getSelectionModel().selectedItemProperty().removeListener(this);
                 }
@@ -154,8 +153,8 @@ public class Controller {
         temp.setText("Edit");
         temp.setOnAction((ActionEvent event) -> {
             reactToEditButton();
-        });
-        System.out.println (newSpace);/*
+        });/*
+        System.out.println (newSpace);
         mainGui.getEditButton() = temp;*/
     }
 
@@ -268,7 +267,8 @@ public class Controller {
     public String getDoorDescrip(String newSpace, String newDoor) {
         int spaceIndex;
         int doorIndex;
-        String textString;
+        String textString = "ID: ";
+        int spaceNum;
         /*System.out.println("Description change");
         System.out.println(newChamber);*/
         spaceIndex = Integer.parseInt(newSpace.replaceAll("\\D", ""));
@@ -276,12 +276,15 @@ public class Controller {
         /*System.out.println(index);*/
         if (newSpace.contains("Chamber")) {
             /*Chamber*/
-            textString = mainLevel.getChambers().get(spaceIndex - 1).getDoor(doorIndex - 1).getDescription();
+            textString = textString.concat(mainLevel.getChambers().get(spaceIndex - 1).getDoor(doorIndex - 1).getDescription());
+            spaceNum = mainLevel.nextSpaceIndex(mainLevel.getChambers().get(spaceIndex - 1).getDoor(doorIndex - 1));
         } else {
             /*Passage*/
-            textString = mainLevel.getPassages().get(spaceIndex - 1).getDoor(doorIndex - 1).getDescription();
+            textString = textString.concat(mainLevel.getPassages().get(spaceIndex - 1).getDoor(doorIndex - 1).getDescription());
+            spaceNum = mainLevel.nextSpaceIndex(mainLevel.getPassages().get(spaceIndex - 1).getDoor(doorIndex - 1));
         }
-        return "ID: " + textString;
+        textString = textString.concat("This door leads to Chamber " + spaceNum);
+        return textString;
     }
 
     /**
