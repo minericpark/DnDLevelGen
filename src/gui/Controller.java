@@ -51,6 +51,7 @@ public class Controller {
      * @param newSpace name of new space
      */
     public void reactToSpaceChange(String newSpace) {
+        mainGui.setCurrentSpace(newSpace);
         mainGui.getPrimaryText().setText(getSpaceDescrip(newSpace));
         /*Change dropdown*/
         updateComboBox(newSpace);
@@ -124,7 +125,7 @@ public class Controller {
         ChangeListener<String> listener = new ChangeListener<>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                if (mainGui.getDoorCombo().getValue() != null) {
+                if (mainGui.getDoorCombo().getValue() != null && t1 != null && newSpace.equals(mainGui.getCurrentSpace())) {
                     reactToBoxChange(newSpace, t1);
                     System.out.println(newSpace);
                     System.out.println(t1);
@@ -134,9 +135,10 @@ public class Controller {
             }
         };
 
-        System.out.println("combobox updated");
+        mainGui.getDoorCombo().getSelectionModel().selectedItemProperty().removeListener(listener);
         mainGui.getDoorCombo().getSelectionModel().clearSelection();
         mainGui.getDoorCombo().setItems(null);
+        mainGui.getDescriptionPane().getContent().clear();
         for (i = 0; i < getNumDoors(newSpace); i++) {
             String temp;
             temp = "Door " + (i + 1);
@@ -152,13 +154,22 @@ public class Controller {
         temp.setText("Edit");
         temp.setOnAction((ActionEvent event) -> {
             reactToEditButton();
-        });/*
+        });
+        System.out.println (newSpace);/*
         mainGui.getEditButton() = temp;*/
     }
 
     private Popup popUpEdit() {
         Stage newPop = new Stage();
         Popup editPop = new Popup();
+        Button monsterButton = new Button();
+        Button treasureButton = new Button();
+
+        FlowPane newPane = new FlowPane();
+
+        monsterButton.setText("Modify monsters");
+        treasureButton.setText("Modify treasures");
+
         return null;
     }
 
@@ -182,6 +193,30 @@ public class Controller {
         removeButton.setText("Remove Monster");
         removeButton.setOnAction((ActionEvent event) -> {
            /*React to remove monster*/
+        });
+        return null;
+    }
+
+    private Popup popUpTreasEdit() {
+        Stage newPop = new Stage();
+        Popup editPop = new Popup();
+        Button addButton = new Button();
+        Button removeButton = new Button();
+        TextField treasureIndex = new TextField(); /*Remove*/
+        TextField treasureType = new TextField(); /*Add type*/
+
+        FlowPane newPane = new FlowPane();
+
+        treasureIndex.setPromptText("Enter monster index of existing monster");
+        treasureType.setPromptText("Enter treasure type from 1-100");
+
+        addButton.setText("Add Monster");
+        addButton.setOnAction((ActionEvent event) -> {
+            /*React to add monster*/
+        });
+        removeButton.setText("Remove Monster");
+        removeButton.setOnAction((ActionEvent event) -> {
+            /*React to remove monster*/
         });
         return null;
     }

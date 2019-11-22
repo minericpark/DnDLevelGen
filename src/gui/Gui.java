@@ -35,6 +35,7 @@ public class Gui extends Application {
     private TextArea primaryText;
     private ComboBox<String> primaryDoors;
     private Button editButton;
+    private String currentSpace;
 
     /**
      * Initializes all Gui instances.
@@ -48,6 +49,7 @@ public class Gui extends Application {
         root = setUpRoot();
         primaryScene = new Scene(root, 800, 675);
         root = adjustablePane(root);
+        descriptionPane = new Popup();
         primaryScene.getStylesheets().add((new File("res/dungeon.css")).toURI().toString());
         primaryStage.setTitle("Dungeon Generator 4.0");
         primaryStage.setScene(primaryScene);
@@ -198,6 +200,14 @@ public class Gui extends Application {
     }
 
     /**
+     * Sets current space's string.
+     * @param newString new space to replace current space of gui
+     */
+    public void setCurrentSpace(String newString) {
+        currentSpace = newString;
+    }
+
+    /**
      * Returns primary text of gui.
      * @return primaryText global variable that controls main text area of gui
      */
@@ -243,6 +253,22 @@ public class Gui extends Application {
      */
     public BorderPane getRoot() {
         return root;
+    }
+
+    /**
+     * Returns primary scene of gui.
+     * @return primaryScene global variable that controls scene of gui
+     */
+    public Scene getPrimaryScene() {
+        return primaryScene;
+    }
+
+    /**
+     * Returns string name of current space.
+     * @return currentSpace global variable that determines current space by string
+     */
+    public String getCurrentSpace() {
+        return currentSpace;
     }
 
     /**

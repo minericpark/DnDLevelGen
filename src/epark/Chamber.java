@@ -358,16 +358,15 @@ public class Chamber extends epark.Space implements java.io.Serializable {
      * Adds treasure imported from inputs of gui.
      *
      * @param indexNum index of treasure type specified
-     * @param containNum index number of treasure's container
      * @return 0-1, true of false dependent on if action has succeeded
      */
-    public int addTreasGui(int indexNum, int containNum) {
+    public int addTreasGui(int indexNum) {
         Treasure newTreasure = new Treasure();
         if (indexNum < 1 || indexNum > 100) {
             return 0; /*Fail*/
         } else {
             newTreasure.setDescription(indexNum);
-            newTreasure.setContainer(containNum);
+            newTreasure.setContainer(rollD20());
             addTreasure(newTreasure);
             return 1;
         }
