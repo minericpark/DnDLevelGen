@@ -207,6 +207,7 @@ public class Controller {
                 mainLevel = (Level) in.readObject();
                 in.close();
                 fileIn.close();
+                reactToSpaceChange("Chamber 1");
             } catch (IOException i) {
                 System.out.println("Load failed");
             } catch (ClassNotFoundException c) {
@@ -214,7 +215,6 @@ public class Controller {
             }
         }
         /*Implement better change when there is time*/
-        reactToSpaceChange("Chamber 1");
     }
 
     /**
@@ -444,7 +444,7 @@ public class Controller {
         }
         for (i = 0; i < getMainLevel().getPassages().size(); i++) {
             String temp;
-            temp = "Passages " + (i + 1);
+            temp = "Passage " + (i + 1);
             allSpaces.add(temp);
         }
         return allSpaces;

@@ -11,19 +11,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -55,10 +44,10 @@ public class Gui extends Application {
         currentSpace = "null";
         primaryStage = givenStage;
         root = setUpRoot();
-        primaryScene = new Scene(root, 800, 675);
+        primaryScene = new Scene(root, 820, 675);
         root = adjustablePane(root);
         descriptionPane = new Popup();
-        primaryScene.getStylesheets().add((new File("res/dungeon.css")).toURI().toString());
+        this.attachDefCSS(primaryScene);
         primaryStage.setTitle("Dungeon Generator 4.0");
         primaryStage.setScene(primaryScene);
         primaryStage.show();
@@ -70,17 +59,22 @@ public class Gui extends Application {
      */
     private BorderPane setUpRoot() {
         BorderPane temp = new BorderPane();
-        HBox chamberView = new HBox(10);
-        chamberView.setAlignment(Pos.CENTER);
-        Node topMenu = setUpTopMenu();
-        editButton = setUpEditButt();
+        HBox chamberView = createGeneralHbox();
+        VBox doorView = createGeneralVbox();
         Node leftMenu = setUpLeftMenu();
+        Node topMenu = setUpTopMenu();
+
+        chamberView.setAlignment(Pos.CENTER);
+        editButton = setUpEditButt();
         primaryText = setUpMainText();
         primaryDoors = setUpAdditionalText();
+        doorView.getChildren().add(primaryDoors);
+        doorView.getChildren().add(editButton);
+        chamberView.getChildren().addAll(leftMenu, primaryText, doorView);
         temp.setTop(topMenu);
-        temp.setBottom(editButton);
-        chamberView.getChildren().addAll(leftMenu, primaryText, primaryDoors);
-        temp.setCenter(chamberView);
+        temp.setLeft(leftMenu);
+        temp.setCenter(primaryText);
+        temp.setRight(doorView);
         return temp;
     }
 
@@ -124,8 +118,6 @@ public class Gui extends Application {
      * @return menu composed of left gui elements
      */
     private Node setUpLeftMenu() {
-        MenuBar tempBar = new MenuBar();
-        Menu tempMenu = new Menu();
         ObservableList<String> observeList;
         ListView<String> viewList;
 
@@ -138,7 +130,7 @@ public class Gui extends Application {
                 theController.reactToSpaceChange(t1);
             }
         });
-
+        viewList.setPrefWidth(130);
         viewList.getStyleClass().addAll("selectMenu");
 
         return viewList;
@@ -167,6 +159,7 @@ public class Gui extends Application {
         temp.setText("Welcome to Dungeon Generator 4.0!\n" + "A level has already been generated for you\n"
                 + "Please select a passage or chamber on the left tab to display it's description");
         temp.setEditable(false);
+        temp.getStyleClass().addAll("mainText");
         return temp;
     }
 
@@ -175,13 +168,13 @@ public class Gui extends Application {
      * @return temp a plain combobox
      */
     private ComboBox setUpAdditionalText() {
-        int i;
         ArrayList<String> tempList = new ArrayList<>();
         ComboBox<String> temp = new ComboBox<>();
         ObservableList<String> observeList;
         tempList.add("Temporary");
         observeList = FXCollections.observableArrayList(tempList);
         temp.setItems(observeList);
+        temp.getStyleClass().addAll("doorMenu");
 
         return temp;
     }
@@ -240,6 +233,7 @@ public class Gui extends Application {
 
         doorPop.getContent().add(doorDescrip);
         close.setOnAction(e -> doorPop.hide());
+        doorDescrip.getStyleClass().addAll("popUp");
         return doorPop;
     }
 
@@ -255,15 +249,19 @@ public class Gui extends Application {
 
         monsterButton.setText("Modify monsters");
         monsterButton.setOnAction((ActionEvent event) -> {
-            openMonsterEdit();
+            this.openMonsterEdit();
         });
         treasureButton.setText("Modify treasures");
         treasureButton.setOnAction((ActionEvent event) -> {
-            openTreasEdit();
+            this.openTreasEdit();
         });
         newPane.getChildren().add(monsterButton);
         newPane.getChildren().add(treasureButton);
         newScene = new Scene(newPane);
+        this.attachDefCSS(newScene);
+        monsterButton.getStyleClass().addAll("subEditButton");
+        treasureButton.getStyleClass().addAll("subEditButton");
+        newPane.getStyleClass().addAll("editPop");
         newPop.setScene(newScene);
         newPop.setTitle("Edit Popup");
         newPop.show();
@@ -281,6 +279,8 @@ public class Gui extends Application {
         error.setText("Invalid request");
         newPane.getChildren().add(error);
         newScene = new Scene(newPane);
+        this.attachDefCSS(newScene);
+        newPane.getStyleClass().addAll("editPop");
         newPop.setScene(newScene);
         newPop.show();
     }
@@ -308,6 +308,9 @@ public class Gui extends Application {
         newPane.getChildren().add(passageField);
         newPane.getChildren().add(confirmButton);
         newScene = new Scene(newPane);
+        this.attachDefCSS(newScene);
+        confirmButton.getStyleClass().addAll("subEditButton");
+        newPane.getStyleClass().addAll("editPop");
         newPop.setScene(newScene);
         newPop.showAndWait();
 
@@ -358,6 +361,11 @@ public class Gui extends Application {
         newPane.getChildren().add(addMon);
         newPane.getChildren().add(removeMon);
         newScene = new Scene(newPane);
+        this.attachDefCSS(newScene);
+        typesDisplay.getStyleClass().addAll("doorMenu");
+        addButton.getStyleClass().addAll("subEditButton");
+        removeButton.getStyleClass().addAll("subEditButton");
+        newPane.getStyleClass().addAll("editPop");
         newPop.setScene(newScene);
         newPop.setTitle("Monster Edit");
         newPop.show();
@@ -406,6 +414,11 @@ public class Gui extends Application {
         newPane.getChildren().add(addTreas);
         newPane.getChildren().add(removeTreas);
         newScene = new Scene(newPane);
+        this.attachDefCSS(newScene);
+        typesDisplay.getStyleClass().addAll("doorMenu");
+        addButton.getStyleClass().addAll("subEditButton");
+        removeButton.getStyleClass().addAll("subEditButton");
+        newPane.getStyleClass().addAll("editPop");
         newPop.setScene(newScene);
         newPop.setTitle("Treasure Edit");
         newPop.show();
@@ -443,16 +456,50 @@ public class Gui extends Application {
         newPane.getChildren().add(confirmText);
         newPane.getChildren().add(buttonBox);
         newScene = new Scene(newPane);
+        this.attachDefCSS(newScene);
+        confirmButton.getStyleClass().addAll("subEditButton");
+        discardButton.getStyleClass().addAll("subEditButton");
+        newPane.getStyleClass().addAll("editPop");
         newPop.setScene(newScene);
         newPop.showAndWait();
         return success.get();
     }
 
     /**
+     * Attaches main style sheet of GUI to provided pane.
+     * @param givenScene provided scene to attach style sheet to
+     */
+    private void attachDefCSS(Scene givenScene) {
+        givenScene.getStylesheets().add((new File("res/dungeon.css")).toURI().toString());
+    }
+
+    /**
+     * Create and return a general VBox.
+     * @return temp generated vbox
+     */
+    private VBox createGeneralVbox() {
+        VBox temp = new VBox(10);
+
+        temp.getStyleClass().addAll("modMenu");
+
+        return temp;
+    }
+
+    /**
+     * Create and return a general HBox.
+     * @return temp generated hbox
+     */
+    private HBox createGeneralHbox() {
+        HBox temp = new HBox(10);
+
+        return temp;
+    }
+
+    /**
      * Creates and returns a generalized flowpane.
      * @return newPane general flowpane for use
      */
-    public FlowPane createGeneralPane() {
+    private FlowPane createGeneralPane() {
         FlowPane newPane = new FlowPane();
 
         newPane.setAlignment(Pos.CENTER);
@@ -467,7 +514,7 @@ public class Gui extends Application {
      * @param label given string to label button with
      * @return newButton generalized button with new label
      */
-    public Button createGeneralButton(String label) {
+    private Button createGeneralButton(String label) {
         Button newButton = new Button();
 
         newButton.setText(label);
@@ -479,7 +526,7 @@ public class Gui extends Application {
      * @param label given string to label textfield with
      * @return newField generalized textfield with new lavel
      */
-    public TextField createGeneralTextF(String label) {
+    private TextField createGeneralTextF(String label) {
         TextField newField = new TextField();
 
         newField.setPromptText(label);

@@ -1,10 +1,24 @@
+@font-face {
+    src: url("/fonts/runescape_uf.ttf");
+}
+
+.text {
+    -fx-font-family: "RuneScape UF";
+}
+
 .root {
-    -fx-background-color: #ffffff;
-    -fx-font-size: 10pt;
+    -fx-background-color: #DBD1B6;
+    -fx-font-size: 11pt;
 }
 
 .mainText {
-    -fx-padding: 10;
+    -fx-font-size: 13pt;
+    -fx-font-family: "RuneScape UF";
+    -fx-border-color: #615640;
+    -fx-border-style: solid;
+    -fx-border-width: 3;
+    -fx-control-inner-background: #BAA98A;
+    -fx-text-fill: #000000;
 }
 
 .fileHandler {
@@ -12,10 +26,88 @@
 }
 
 .editButton {
-    -fx-padding: 10;
+    -fx-background-color: linear-gradient(#45310E, #3B2404);
+    -fx-font-weight: bold;
+    -fx-text-fill: #CFC84A;
+}
+
+.editButton:hover {
+    -fx-background-color: linear-gradient(#3B2404, #45310E);
+    -fx-text-fill: #FBF4E6;
+}
+
+.modMenu {
+    -fx-padding: 5;
+    -fx-border-width: 3;
+    -fx-border-style: solid;
+    -fx-border-color: #615640;
+    -fx-background-color: #BAA98A;
 }
 
 .selectMenu {
-    -fx-padding: 10;
+    -fx-border-width: 3;
+    -fx-border-style: solid;
+    -fx-background-color: radial-gradient(radius 50%, #3B2404 50%, #45310E 50%);
 }
 
+.selectMenu .list-cell {
+    -fx-background-color: #3B2404;
+    -fx-text-fill: #CFC84A;
+}
+
+.selectMenu .list-cell:hover {
+    -fx-text-fill: #FBF4E6;
+    -fx-background-color: linear-gradient(#3B2404, #45310E);
+}
+
+.selectMenu .list-cell:selected {
+    -fx-text-fill: #FBF4E6;
+    -fx-background-color: linear-gradient(#3B2404, #45310E);
+}
+
+.doorMenu {
+    -fx-background-color: #3B2404;
+    -fx-text-fill: #FBF4E6;
+}
+
+.doorMenu .list-cell {
+    -fx-background-color: #3B2404;
+    -fx-text-fill: #CFC84A;
+}
+
+.doorMenu .list-cell:hover {
+    -fx-background-color: linear-gradient(#3B2404, #45310E);
+    -fx-text-fill: #FBF4E6;
+}
+
+.doorMenu .list-cell:selected {
+    -fx-background-color: linear-gradient(#3B2404, #45310E);
+    -fx-text-fill: #FBF4E6;
+}
+
+.popUp {
+    -fx-border-color: #615640;
+    -fx-border-style: solid;
+    -fx-border-width: 2;
+    -fx-padding: 3;
+    -fx-background-color: #DBD1B6;
+    -fx-font-size: 12pt;
+}
+
+.editPop {
+    -fx-font-family: "RuneScape UF";
+    -fx-background-color: linear-gradient(#45310E, #3B2404);
+    -fx-font-weight: bold;
+    -fx-text-fill: #CFC84A;
+}
+
+.subEditButton {
+    -fx-background-color: linear-gradient(#45310E, #3B2404);
+    -fx-font-weight: bold;
+    -fx-text-fill: #CFC84A;
+}
+
+.subEditButton:hover {
+    -fx-background-color: linear-gradient(#3B2404, #45310E);
+    -fx-text-fill: #FBF4E6;
+}

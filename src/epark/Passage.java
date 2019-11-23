@@ -50,7 +50,7 @@ public class Passage extends epark.Space implements java.io.Serializable {
         this.passageDescription = "";
 
         for (i = 0; i < thePassage.size(); i++) {
-            this.passageDescription = this.passageDescription.concat(i + 1 + ". " + this.thePassage.get(i).getDescription());
+            this.passageDescription = this.passageDescription.concat("Passage Section " + (i + 1) + ": " + this.thePassage.get(i).getDescription());
         }
     }
 
