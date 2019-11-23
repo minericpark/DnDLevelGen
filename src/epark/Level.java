@@ -1,5 +1,7 @@
 package epark;
 
+import dnd.models.Monster;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -85,6 +87,7 @@ public class Level implements java.io.Serializable {
 
     /**
      * Returns index of chamber that door leads to.
+     *
      * @param givenDoor provided door to retrieve target chamber from
      * @return indexNum index number of chamber that door leads to
      */
@@ -262,7 +265,7 @@ public class Level implements java.io.Serializable {
     /**
      * Adds and connects appropriate doors.
      *
-     * @param tempDoors arraylist of doors to check
+     * @param tempDoors  arraylist of doors to check
      * @param otherDoors arraylist of door that do not belong to specific chamber
      */
     private void scanAndConnect(ArrayList<Door> tempDoors, ArrayList<Door> otherDoors) {
@@ -295,7 +298,7 @@ public class Level implements java.io.Serializable {
     /**
      * Connects the specified doors (for function scanAndConnect).
      *
-     * @param firstDoor first door to connect
+     * @param firstDoor  first door to connect
      * @param secondDoor second door to connect
      */
     private void connectDoor(Door firstDoor, Door secondDoor) {
@@ -343,6 +346,106 @@ public class Level implements java.io.Serializable {
     private void genChamber() {
         Chamber newChamb = new Chamber();
         addChamber(newChamb);
+    }
+
+    /**
+     * Creates and returns the hashmap of treasures.
+     * @return treasure hashmap of treasures with their assigned values
+     */
+    public HashMap mapOfTreasures() {
+        HashMap<String, Integer> treasures = new HashMap<>();
+
+        treasures.put("1000 copper pieces/level", 25);
+        treasures.put("1000 silver pieces/level", 50);
+        treasures.put("750 electrum pieces/level", 65);
+        treasures.put("250 gold pieces/level", 80);
+        treasures.put("100 platinum pieces/level", 90);
+        treasures.put("1-4 gems/level", 94);
+        treasures.put("1 piece jewellery/level", 97);
+        treasures.put("1 magic item (roll on Magic item table)", 99);
+
+        return treasures;
+    }
+
+    /**
+     * Creates and returns the list of treasures.
+     * @return treasures arraylist of string of treasures
+     */
+    public ArrayList listOfTreasure() {
+        ArrayList<String> treasures = new ArrayList<>();
+
+        treasures.add("1000 copper pieces/level");
+        treasures.add("1000 silver pieces/level");
+        treasures.add("750 electrum pieces/level");
+        treasures.add("250 gold pieces/level");
+        treasures.add("100 platinum pieces/level");
+        treasures.add("1-4 gems/level");
+        treasures.add("1 piece jewellery/level");
+        treasures.add("1 magic item (roll on Magic item table)");
+
+        return treasures;
+    }
+
+    /**
+     * Creates and returns the hashmap of monsters.
+     * @return monsters hashmap of monsters with their assigned values
+     */
+    public HashMap mapOfMonsters() {
+        HashMap<String, Integer> monsters = new HashMap<>();
+
+        monsters.put("Ant, Giant", 1);
+        monsters.put("Badger", 3);
+        monsters.put("Beetle, Fire", 10);
+        monsters.put("Demon, Manes", 15);
+        monsters.put("Dwarf", 16);
+        monsters.put("Ear Seeker", 18);
+        monsters.put("Elf", 19);
+        monsters.put("Gnome", 21);
+        monsters.put("Goblin", 25);
+        monsters.put("Halfling", 27);
+        monsters.put("Hobgoblin", 33);
+        monsters.put("Human Bandit", 48);
+        monsters.put("Kobold", 54);
+        monsters.put("Orc", 66);
+        monsters.put("Piercer", 70);
+        monsters.put("Rat, Giant", 83);
+        monsters.put("Rot Grub", 85);
+        monsters.put("Shrieker", 96);
+        monsters.put("Skeleton", 98);
+        monsters.put("Zombie", 99);
+
+        return monsters;
+    }
+
+    /**
+     * Creates and returns the list of monsters.
+     * @return monsters arraylist of string of monsters
+     */
+    public ArrayList listOfMonster() {
+        ArrayList<String> monsters = new ArrayList<>();
+
+        monsters.add("Ant, Giant");
+        monsters.add("Badger");
+        monsters.add("Beetle, Fire");
+        monsters.add("Demon, Manes");
+        monsters.add("Dwarf");
+        monsters.add("Ear Seeker");
+        monsters.add("Elf");
+        monsters.add("Gnome");
+        monsters.add("Goblin");
+        monsters.add("Halfling");
+        monsters.add("Hobgoblin");
+        monsters.add("Human Bandit");
+        monsters.add("Kobold");
+        monsters.add("Orc");
+        monsters.add("Piercer");
+        monsters.add("Rat, Giant");
+        monsters.add("Rot Grub");
+        monsters.add("Shrieker");
+        monsters.add("Skeleton");
+        monsters.add("Zombie");
+
+        return monsters;
     }
 
     /**

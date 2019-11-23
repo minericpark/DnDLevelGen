@@ -57,7 +57,7 @@ public class Passage extends epark.Space implements java.io.Serializable {
     /**
      * Updates passage description after an action has been conducted.
      */
-    private void updateDescription() {
+    public void updateDescription() {
         this.setPassageDescription();
     }
 

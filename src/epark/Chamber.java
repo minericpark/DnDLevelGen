@@ -287,7 +287,7 @@ public class Chamber extends epark.Space implements java.io.Serializable {
         this.mySize = theShape;
         this.genSize();
         this.genDoors();
-        this.updateDescription();
+        this.setUpDescription();
     }
 
     /**
@@ -300,7 +300,7 @@ public class Chamber extends epark.Space implements java.io.Serializable {
         //should add a door connection to this room
         newDoor.setSpace(this);
         this.chambDoors.add(newDoor);
-        this.updateDescription();
+        this.setUpDescription();
     }
 
     /**
@@ -315,7 +315,8 @@ public class Chamber extends epark.Space implements java.io.Serializable {
             return 0; /*Fail*/
         } else {
             newMonster.setType(indexNum);
-            addMonster(newMonster);
+            this.addMonster(newMonster);
+            this.updateDescription();
             return 1;
         }
     }
@@ -336,9 +337,9 @@ public class Chamber extends epark.Space implements java.io.Serializable {
      * @return 0-1, true or false dependent on if action has succeeded
      */
     public int removeMonGui(int indexNum) {
-        int actualIndex = indexNum - 1;
-        if (chambMonsters.size() > actualIndex) {
-            removeMonster(actualIndex);
+        if (chambMonsters.size() > indexNum) {
+            this.removeMonster(indexNum);
+            this.updateDescription();
             return 1;
         } else {
             return 0;
@@ -367,7 +368,8 @@ public class Chamber extends epark.Space implements java.io.Serializable {
         } else {
             newTreasure.setDescription(indexNum);
             newTreasure.setContainer(rollD20());
-            addTreasure(newTreasure);
+            this.addTreasure(newTreasure);
+            this.updateDescription();
             return 1;
         }
     }
@@ -388,9 +390,9 @@ public class Chamber extends epark.Space implements java.io.Serializable {
      * @return 0-1, true or false dependent on if action has succeeded
      */
     public int removeTreasGui(int indexNum) {
-        int actualIndex = indexNum - 1;
-        if (chambTreasures.size() > actualIndex) {
-            removeTreasure(actualIndex);
+        if (chambTreasures.size() > indexNum) {
+            this.removeTreasure(indexNum);
+            this.updateDescription();
             return 1;
         } else {
             return 0;
@@ -476,10 +478,10 @@ public class Chamber extends epark.Space implements java.io.Serializable {
 
         contentDescrip = "The chamber is/has " + this.myContents.getDescription() + ".\n";
         /*Determine how to see if myContents is either monster, etc.*/
-        if (this.myContents.getDescription().contains("monster")) {
+        if (this.chambMonsters.size() > 0) {
             contentDescrip = contentDescrip.concat(getMonsterDescrip());
         }
-        if (this.myContents.getDescription().contains("treasure")) {
+        if (this.chambTreasures.size() > 0) {
             contentDescrip = contentDescrip.concat(getTreasureDescrip());
         }
         if (this.myContents.getDescription().contains("stairs")) {

@@ -2,20 +2,7 @@ package gui;
 
 import epark.Level;
 import epark.Space;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Popup;
-import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,7 +10,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.nio.file.Paths;
 
 public class Controller {
 
@@ -41,10 +28,153 @@ public class Controller {
     }
 
     /**
-     * Temporary template for button action event handling.
+     * Event handles click of edit button.
      */
     public void reactToEditButton() {
-        System.out.println("To be implemented\n");
+        System.out.println(mainGui.getCurrentSpace());
+        mainGui.openEdit();
+    }
+
+    /**
+     * Event handles addition of treasure.
+     * @param selectedTreasure name of treasure selected for addition
+     */
+    public void reactToAddTreasure(String selectedTreasure) {
+        int givenSpace;
+        int givenTreasure;
+        int givenPS;
+
+        if (!selectedTreasure.equals("")) {
+            if (mainGui.openConfirm() == 1) {
+                if (mainGui.getCurrentSpace().contains("Chamber")) {
+                    givenSpace = Integer.parseInt(mainGui.getCurrentSpace().replaceAll("\\D", ""));
+                    givenTreasure = (int) mainLevel.mapOfTreasures().get(selectedTreasure);
+                    if (mainLevel.getChambers().get(givenSpace - 1).addTreasGui(givenTreasure) == 0) {
+                        mainGui.openError();
+                    }
+                } else {
+                    givenSpace = Integer.parseInt(mainGui.getCurrentSpace().replaceAll("\\D", ""));
+                    givenTreasure = (int) mainLevel.mapOfTreasures().get(selectedTreasure);
+                    /*Create popup*/
+                    givenPS = mainGui.openPSNum() - 1;
+                    if (givenPS < mainLevel.getPassages().get(givenSpace - 1).getThePassage().size() && givenPS >= 0) {
+                        mainLevel.getPassages().get(givenSpace - 1).getThePassage().get(givenPS).addTreasGui(givenTreasure);
+                    } else {
+                        mainGui.openError();
+                    }
+                    mainLevel.getPassages().get(givenSpace - 1).updateDescription();
+                }
+                reactToSpaceChange(mainGui.getCurrentSpace());
+                /*System.out.println(mainLevel.getDescription());*/
+            } else {
+                System.out.println("Add failed");
+            }
+        }
+    }
+
+    /**
+     * Event handles addition of monster.
+     * @param selectedMonster name of monster selected for addition
+     */
+    public void reactToAddMonster(String selectedMonster) {
+        int givenSpace;
+        int givenMonster;
+        int givenPS;
+
+        if (!selectedMonster.equals("")) {
+            if (mainGui.openConfirm() == 1) {
+                if (mainGui.getCurrentSpace().contains("Chamber")) {
+                    givenSpace = Integer.parseInt(mainGui.getCurrentSpace().replaceAll("\\D", ""));
+                    givenMonster = (int) mainLevel.mapOfMonsters().get(selectedMonster);
+                    if (mainLevel.getChambers().get(givenSpace - 1).addMonGui(givenMonster) == 0) {
+                        mainGui.openError();
+                    }
+                } else {
+                    givenSpace = Integer.parseInt(mainGui.getCurrentSpace().replaceAll("\\D", ""));
+                    givenMonster = (int) mainLevel.mapOfMonsters().get(selectedMonster);
+                    /*Create popup*/
+                    givenPS = mainGui.openPSNum() - 1;
+                    if (givenPS < mainLevel.getPassages().get(givenSpace - 1).getThePassage().size() && givenPS >= 0) {
+                        mainLevel.getPassages().get(givenSpace - 1).getThePassage().get(givenPS).addMonGui(givenMonster);
+                    } else {
+                        mainGui.openError();
+                    }
+                    mainLevel.getPassages().get(givenSpace - 1).updateDescription();
+                }
+                reactToSpaceChange(mainGui.getCurrentSpace());
+                /*System.out.println(mainLevel.getDescription());*/
+            } else {
+                System.out.println("Add failed");
+            }
+        }
+    }
+
+    /**
+     * Event handles removal of treasure.
+     * @param indexTreasure index of treasure selected for removal
+     */
+    public void reactToRemTreasure(int indexTreasure) {
+
+        int givenSpace;
+        int givenPS;
+
+        if (indexTreasure != 0) {
+            if (mainGui.openConfirm() == 1) {
+                if (mainGui.getCurrentSpace().contains("Chamber")) {
+                    givenSpace = Integer.parseInt(mainGui.getCurrentSpace().replaceAll("\\D", ""));
+                    if (mainLevel.getChambers().get(givenSpace - 1).removeTreasGui(indexTreasure - 1) == 0) {
+                        mainGui.openError();
+                    }
+                } else {
+                    givenSpace = Integer.parseInt(mainGui.getCurrentSpace().replaceAll("\\D", ""));
+                    /*Create popup*/
+                    givenPS = mainGui.openPSNum() - 1;
+                    if (givenPS < mainLevel.getPassages().get(givenSpace - 1).getThePassage().size() && givenPS >= 0 && mainLevel.getPassages().get(givenSpace - 1).getThePassage().get(givenPS).getTreasures().size() > indexTreasure - 1) {
+                        mainLevel.getPassages().get(givenSpace - 1).getThePassage().get(givenPS).removeTreasGui(indexTreasure - 1);
+                    } else {
+                        mainGui.openError();
+                    }
+                    mainLevel.getPassages().get(givenSpace - 1).updateDescription();
+                }
+                reactToSpaceChange(mainGui.getCurrentSpace());
+            } else {
+                System.out.println("Remove failed");
+            }
+        }
+    }
+
+    /**
+     * Event handles removal of monster.
+     * @param indexMonster index of monster selected for removal
+     */
+    public void reactToRemMonster(int indexMonster) {
+        int givenSpace;
+        int givenMonster;
+        int givenPS;
+
+        if (indexMonster != 0) {
+            if (mainGui.openConfirm() == 1) {
+                if (mainGui.getCurrentSpace().contains("Chamber")) {
+                    givenSpace = Integer.parseInt(mainGui.getCurrentSpace().replaceAll("\\D", ""));
+                    if (mainLevel.getChambers().get(givenSpace - 1).removeMonGui(indexMonster - 1) == 0) {
+                        mainGui.openError();
+                    }
+                } else {
+                    givenSpace = Integer.parseInt(mainGui.getCurrentSpace().replaceAll("\\D", ""));
+                    /*Create popup*/
+                    givenPS = mainGui.openPSNum() - 1;
+                    if (givenPS < mainLevel.getPassages().get(givenSpace - 1).getThePassage().size() && givenPS >= 0 && mainLevel.getPassages().get(givenSpace - 1).getThePassage().get(givenPS).getMonsters().size() > indexMonster - 1) {
+                        mainLevel.getPassages().get(givenSpace - 1).getThePassage().get(givenPS).removeMonGui(indexMonster - 1);
+                    } else {
+                        mainGui.openError();
+                    }
+                    mainLevel.getPassages().get(givenSpace - 1).updateDescription();
+                }
+                reactToSpaceChange(mainGui.getCurrentSpace());
+            } else {
+                System.out.println("Remove failed");
+            }
+        }
     }
 
     /**
@@ -55,8 +185,7 @@ public class Controller {
         mainGui.setCurrentSpace(newSpace);
         mainGui.getPrimaryText().setText(getSpaceDescrip(newSpace));
         /*Change dropdown*/
-        updateComboBox(newSpace);
-        updateEditButton(newSpace);
+        mainGui.updateComboBox(newSpace);
     }
 
     /**
@@ -66,7 +195,7 @@ public class Controller {
      */
     public void reactToBoxChange(String newSpace, String newDoor) {
         if (newSpace != null) {
-            mainGui.setDescriptionPane(popUpDoor(getDoorDescrip(newSpace, newDoor)));
+            mainGui.setDescriptionPane(mainGui.updatePopUpDoor(getDoorDescrip(newSpace, newDoor)));
             if (mainGui.getDescriptionPane().isShowing()) {
                 mainGui.getDescriptionPane().hide();
             } else {
@@ -81,7 +210,12 @@ public class Controller {
      */
     public void reactToFileSave() {
         FileChooser filePick = new FileChooser();
-        File file = filePick.showSaveDialog(mainGui.getPrimaryStage());
+        String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
+        File initialDirectory = new File(currentPath);
+        File file;
+
+        filePick.setInitialDirectory(initialDirectory);
+        file = filePick.showSaveDialog(mainGui.getPrimaryStage());
         if (file != null) {
             try {
                 FileOutputStream fileOut = new FileOutputStream(file.getAbsolutePath());
@@ -93,7 +227,6 @@ public class Controller {
                 System.out.println("Save failed");
             }
         }
-        System.out.println("File save");
     }
 
     /**
@@ -101,7 +234,12 @@ public class Controller {
      */
     public void reactToFileLoad() {
         FileChooser filePick = new FileChooser();
-        File file = filePick.showOpenDialog(mainGui.getPrimaryStage());
+        String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
+        File initialDirectory = new File(currentPath);
+        File file;
+
+        filePick.setInitialDirectory(initialDirectory);
+        file = filePick.showOpenDialog(mainGui.getPrimaryStage());
         if (file != null) {
             try {
                 FileInputStream fileIn = new FileInputStream(file.getAbsolutePath());
@@ -115,125 +253,25 @@ public class Controller {
                 System.out.println("Class not found");
             }
         }
-        System.out.println("File load");
-    }
-
-    private void updateComboBox(String newSpace) {
-        ComboBox<String> tempBox = new ComboBox<>();
-        ArrayList<String> tempList = new ArrayList<>();
-        ObservableList<String> observeList;
-        int i;
-        ChangeListener<String> listener = new ChangeListener<>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                if (mainGui.getDoorCombo().getValue() != null && t1 != null && newSpace.equals(mainGui.getCurrentSpace())) {
-                    reactToBoxChange(newSpace, t1);
-                } else {
-                    mainGui.getDoorCombo().getSelectionModel().selectedItemProperty().removeListener(this);
-                }
-            }
-        };
-
-        mainGui.getDoorCombo().getSelectionModel().selectedItemProperty().removeListener(listener);
-        mainGui.getDoorCombo().getSelectionModel().clearSelection();
-        mainGui.getDoorCombo().setItems(null);
-        mainGui.getDescriptionPane().getContent().clear();
-        for (i = 0; i < getNumDoors(newSpace); i++) {
-            String temp;
-            temp = "Door " + (i + 1);
-            tempList.add(temp);
-        }
-        observeList = FXCollections.observableArrayList(tempList);
-        mainGui.getDoorCombo().setItems(observeList);
-        mainGui.getDoorCombo().getSelectionModel().selectedItemProperty().addListener(listener);
-    }
-
-    private void updateEditButton(String newSpace) {
-        Button temp = new Button();
-        temp.setText("Edit");
-        temp.setOnAction((ActionEvent event) -> {
-            reactToEditButton();
-        });/*
-        System.out.println (newSpace);
-        mainGui.getEditButton() = temp;*/
-    }
-
-    private Popup popUpEdit() {
-        Stage newPop = new Stage();
-        Popup editPop = new Popup();
-        Button monsterButton = new Button();
-        Button treasureButton = new Button();
-
-        FlowPane newPane = new FlowPane();
-
-        monsterButton.setText("Modify monsters");
-        treasureButton.setText("Modify treasures");
-
-        return null;
-    }
-
-    private Popup popUpMonsterEdit() {
-        Stage newPop = new Stage();
-        Popup editPop = new Popup();
-        Button addButton = new Button();
-        Button removeButton = new Button();
-        TextField monsterIndex = new TextField(); /*Remove*/
-        TextField monsterType = new TextField(); /*Add type*/
-
-        FlowPane newPane = new FlowPane();
-
-        monsterIndex.setPromptText("Enter monster index of existing monster");
-        monsterType.setPromptText("Enter monster type from 1-100");
-
-        addButton.setText("Add Monster");
-        addButton.setOnAction((ActionEvent event) -> {
-           /*React to add monster*/
-        });
-        removeButton.setText("Remove Monster");
-        removeButton.setOnAction((ActionEvent event) -> {
-           /*React to remove monster*/
-        });
-        return null;
-    }
-
-    private Popup popUpTreasEdit() {
-        Stage newPop = new Stage();
-        Popup editPop = new Popup();
-        Button addButton = new Button();
-        Button removeButton = new Button();
-        TextField treasureIndex = new TextField(); /*Remove*/
-        TextField treasureType = new TextField(); /*Add type*/
-
-        FlowPane newPane = new FlowPane();
-
-        treasureIndex.setPromptText("Enter monster index of existing monster");
-        treasureType.setPromptText("Enter treasure type from 1-100");
-
-        addButton.setText("Add Monster");
-        addButton.setOnAction((ActionEvent event) -> {
-            /*React to add monster*/
-        });
-        removeButton.setText("Remove Monster");
-        removeButton.setOnAction((ActionEvent event) -> {
-            /*React to remove monster*/
-        });
-        return null;
+        /*Implement better change when there is time*/
+        reactToSpaceChange("Chamber 1");
     }
 
     /**
-     * Creates new pop up door with new description.
-     * @param description string description on what to display on popup
-     * @return new popup that displays description
+     * Checks if given string is integer.
+     * @param givenString provided string to check
+     * @return 0/1 - 0 for false, 1 for true
      */
-    private Popup popUpDoor(String description) {
-        Popup doorPop = new Popup();
-        Label doorDescrip = new Label(description);
-        Button close = new Button("Close");
-
-        doorPop.getContent().add(doorDescrip);
-        close.setOnAction(e -> doorPop.hide());
-
-        return doorPop;
+    public int isInteger(String givenString) {
+        try {
+            double d = Integer.parseInt(givenString);
+        } catch (NumberFormatException | NullPointerException ne) {
+            return 0;
+        }
+        if (Integer.parseInt(givenString) <= 0) {
+            return 0;
+        }
+        return 1;
     }
 
     /**

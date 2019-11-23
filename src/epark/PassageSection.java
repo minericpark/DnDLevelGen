@@ -274,7 +274,7 @@ public class PassageSection implements java.io.Serializable {
             return 0; /*Fail*/
         } else {
             newMonster.setType(indexNum);
-            addMonster(newMonster);
+            this.addMonster(newMonster);
             return 1;
         }
     }
@@ -297,9 +297,8 @@ public class PassageSection implements java.io.Serializable {
      * @return 0-1, true or false dependent on if action has succeeded
      */
     public int removeMonGui(int indexNum) {
-        int actualIndex = indexNum - 1;
-        if (passageMonsters.size() > actualIndex) {
-            removeMonster(actualIndex);
+        if (passageMonsters.size() > indexNum) {
+            this.removeMonster(indexNum);
             return 1;
         } else {
             return 0;
@@ -332,7 +331,7 @@ public class PassageSection implements java.io.Serializable {
         } else {
             newTreasure.setDescription(indexNum);
             newTreasure.setContainer(rollD20());
-            addTreasure(newTreasure);
+            this.addTreasure(newTreasure);
             return 1;
         }
     }
@@ -355,9 +354,8 @@ public class PassageSection implements java.io.Serializable {
      * @return 0-1, true or false dependent on if action has succeeded
      */
     public int removeTreasGui(int indexNum) {
-        int actualIndex = indexNum - 1;
-        if (passageTreasures.size() > actualIndex) {
-            removeTreasure(actualIndex);
+        if (passageTreasures.size() > indexNum) {
+            this.removeTreasure(indexNum);
             return 1;
         } else {
             return 0;
@@ -399,6 +397,14 @@ public class PassageSection implements java.io.Serializable {
     }
 
     /**
+     * Returns all treasures of passage section.
+     * @return passageTreasures treasures generated in passage section
+     */
+    public ArrayList<Treasure> getTreasures() {
+        return this.passageTreasures;
+    }
+
+    /**
      * Returns monster of passage section.
      *
      * @param num specified monster
@@ -430,7 +436,7 @@ public class PassageSection implements java.io.Serializable {
         if (this.passageMonsters.size() > 0) {
             monsterDescrip = monsterDescrip.concat("There is/are " + this.passageMonsters.size() + " potential monsters/types of monsters within the chamber.\n");
             for (i = 0; i < this.passageMonsters.size(); i++) {
-                monsterDescrip = monsterDescrip.concat(indentString("The monster is/are a " + this.passageMonsters.get(i).getDescription() + "\n"));
+                monsterDescrip = monsterDescrip.concat(indentString((i + 1) + " The monster is/are a " + this.passageMonsters.get(i).getDescription() + "\n"));
                 monsterDescrip = monsterDescrip.concat(indentString("The amount of monsters potentially spawning is: " + this.passageMonsters.get(i).getMinNum() + " to " + this.passageMonsters.get(i).getMaxNum() + "\n"));
             }
         }
