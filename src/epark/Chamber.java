@@ -476,7 +476,7 @@ public class Chamber extends epark.Space implements java.io.Serializable {
     private String getContents() {
         String contentDescrip;
 
-        contentDescrip = "The chamber is/has " + this.myContents.getDescription() + ".\n";
+        contentDescrip = "";
         /*Determine how to see if myContents is either monster, etc.*/
         if (this.chambMonsters.size() > 0) {
             contentDescrip = contentDescrip.concat(getMonsterDescrip());

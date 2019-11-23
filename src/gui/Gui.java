@@ -11,7 +11,15 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -44,6 +52,7 @@ public class Gui extends Application {
     @Override
     public void start(Stage givenStage) throws Exception {
         theController = new Controller(this);
+        currentSpace = "null";
         primaryStage = givenStage;
         root = setUpRoot();
         primaryScene = new Scene(root, 800, 675);
@@ -119,21 +128,8 @@ public class Gui extends Application {
         Menu tempMenu = new Menu();
         ObservableList<String> observeList;
         ListView<String> viewList;
-        ArrayList<String> tempList = new ArrayList<String>();
-        int i;
 
-        for (i = 0; i < theController.getMainLevel().getChambers().size(); i++) {
-            String temp;
-            temp = "Chamber " + (i + 1);
-            tempList.add(temp);
-        }
-        for (i = 0; i < theController.getMainLevel().getPassages().size(); i++) {
-            String temp;
-            temp = "Passages " + (i + 1);
-            tempList.add(temp);
-        }
-
-        observeList = FXCollections.observableArrayList(tempList);
+        observeList = FXCollections.observableArrayList(theController.getAllSpaces());
         viewList = new ListView<>(observeList);
 
         viewList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -158,6 +154,7 @@ public class Gui extends Application {
         temp.setOnAction((ActionEvent event) -> {
            theController.reactToEditButton();
         });
+        temp.getStyleClass().addAll("editButton");
         return temp;
     }
 
@@ -210,10 +207,7 @@ public class Gui extends Application {
      * @param newSpace string name of new space
      */
     public void updateComboBox(String newSpace) {
-        ComboBox<String> tempBox = new ComboBox<>();
-        ArrayList<String> tempList = new ArrayList<>();
         ObservableList<String> observeList;
-        int i;
         ChangeListener<String> listener = new ChangeListener<>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
@@ -224,16 +218,12 @@ public class Gui extends Application {
                 }
             }
         };
+
         getDoorCombo().getSelectionModel().selectedItemProperty().removeListener(listener);
         getDoorCombo().getSelectionModel().clearSelection();
         getDoorCombo().setItems(null);
         getDescriptionPane().getContent().clear();
-        for (i = 0; i < theController.getNumDoors(newSpace); i++) {
-            String temp;
-            temp = "Door " + (i + 1);
-            tempList.add(temp);
-        }
-        observeList = FXCollections.observableArrayList(tempList);
+        observeList = FXCollections.observableArrayList(theController.getAllDoors(newSpace));
         getDoorCombo().setItems(observeList);
         getDoorCombo().getSelectionModel().selectedItemProperty().addListener(listener);
     }
@@ -250,7 +240,6 @@ public class Gui extends Application {
 
         doorPop.getContent().add(doorDescrip);
         close.setOnAction(e -> doorPop.hide());
-
         return doorPop;
     }
 
@@ -260,13 +249,9 @@ public class Gui extends Application {
     public void openEdit() {
         Stage newPop = new Stage();
         Scene newScene;
+        FlowPane newPane = createGeneralPane();
         Button monsterButton = new Button();
         Button treasureButton = new Button();
-
-        FlowPane newPane = new FlowPane();
-        newPane.setAlignment(Pos.CENTER);
-        newPane.setPadding(new Insets(20));
-        newPane.setHgap(20);
 
         monsterButton.setText("Modify monsters");
         monsterButton.setOnAction((ActionEvent event) -> {
@@ -290,11 +275,8 @@ public class Gui extends Application {
     public void openError() {
         Stage newPop = new Stage();
         Scene newScene;
+        FlowPane newPane = createGeneralPane();
         Text error = new Text();
-        FlowPane newPane = new FlowPane();
-
-        newPane.setAlignment(Pos.CENTER);
-        newPane.setPadding(new Insets(10));
 
         error.setText("Invalid request");
         newPane.getChildren().add(error);
@@ -310,20 +292,12 @@ public class Gui extends Application {
     public int openPSNum() {
         Stage newPop = new Stage();
         Scene newScene;
-        TextField passageField = new TextField();
-        Button confirmButton = new Button();
-        FlowPane newPane = new FlowPane();
+        FlowPane newPane = createGeneralPane();
+        TextField passageField = createGeneralTextF("Passage section number");
+        Button confirmButton = createGeneralButton("Submit passage section number");
         AtomicInteger psNum = new AtomicInteger();
 
         psNum.set(0);
-        newPane.setAlignment(Pos.CENTER);
-        newPane.setPadding(new Insets(20));
-        newPane.setHgap(20);
-        newPane.setVgap(10);
-
-        passageField.setPromptText("Passage section number");
-
-        confirmButton.setText("Submit passage section number");
         confirmButton.setOnAction((ActionEvent ev) -> {
             /*React to remove monster*/
             if (theController.isInteger(passageField.getText()) != 0) {
@@ -331,10 +305,8 @@ public class Gui extends Application {
                 newPop.close();
             }
         });
-
         newPane.getChildren().add(passageField);
         newPane.getChildren().add(confirmButton);
-
         newScene = new Scene(newPane);
         newPop.setScene(newScene);
         newPop.showAndWait();
@@ -348,49 +320,37 @@ public class Gui extends Application {
     private void openMonsterEdit() {
         Stage newPop = new Stage();
         Scene newScene;
+        FlowPane newPane = createGeneralPane();
         VBox addMon = new VBox();
         VBox removeMon = new VBox();
-        Button addButton = new Button();
-        Button removeButton = new Button();
-        TextField monsterIndex = new TextField(); /*Remove*/
+        Button addButton = createGeneralButton("Add Monster");
+        Button removeButton = createGeneralButton("Remove Monster");
+        TextField monsterIndex = createGeneralTextF("Enter monster index of existing monster"); /*Remove*/
         /*Dropdown of monster to add*/
         ComboBox<String> typesDisplay;
         ArrayList<String> monsterTypes = new ArrayList<>();
         final String[] selectedMonster = {""};
 
-        FlowPane newPane = new FlowPane();
-        newPane.setAlignment(Pos.CENTER);
-        newPane.setPadding(new Insets(20));
-        newPane.setHgap(20);
-        newPane.setVgap(10);
-
         monsterTypes.addAll(theController.getMainLevel().listOfMonster());
         typesDisplay = new ComboBox(FXCollections.observableArrayList(monsterTypes));
-
         EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 selectedMonster[0] = typesDisplay.getValue();
             }
         };
-
         typesDisplay.setOnAction(event);
-
-        monsterIndex.setPromptText("Enter number index of monster described in description");
-        monsterIndex.setPromptText("Enter monster index of existing monster");
-
-        addButton.setText("Add Monster");
         addButton.setOnAction((ActionEvent ev) -> {
             /*React to add monster*/
             theController.reactToAddMonster(selectedMonster[0]);
         });
-        removeButton.setText("Remove Monster");
         removeButton.setOnAction((ActionEvent ev) -> {
             /*React to remove monster*/
             if (theController.isInteger(monsterIndex.getText()) != 0) {
                 theController.reactToRemMonster(Integer.parseInt(monsterIndex.getText().replaceAll("\\D", "")));
             }
         });
+
         addMon.getChildren().add(typesDisplay);
         addMon.getChildren().add(addButton);
         removeMon.getChildren().add(monsterIndex);
@@ -409,47 +369,36 @@ public class Gui extends Application {
     private void openTreasEdit() {
         Stage newPop = new Stage();
         Scene newScene;
+        FlowPane newPane = createGeneralPane();
         VBox addTreas = new VBox();
         VBox removeTreas = new VBox();
-        Button addButton = new Button();
-        Button removeButton = new Button();
-        TextField treasureIndex = new TextField(); /*Remove*/
+        Button addButton = createGeneralButton("Add Treasure");
+        Button removeButton = createGeneralButton("Remove Treasure");
+        TextField treasureIndex = createGeneralTextF("Enter treasure index of existing monster"); /*Remove*/
         ComboBox<String> typesDisplay;
         ArrayList<String> treasureTypes = new ArrayList<>();
-        FlowPane newPane = new FlowPane();
         final String[] selectedTreasure = {""};
-
-        newPane.setAlignment(Pos.CENTER);
-        newPane.setPadding(new Insets(20));
-        newPane.setHgap(20);
-        newPane.setVgap(10);
 
         treasureTypes.addAll(theController.getMainLevel().listOfTreasure());
         typesDisplay = new ComboBox(FXCollections.observableArrayList(treasureTypes));
-
         EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 selectedTreasure[0] = typesDisplay.getValue();
             }
         };
-
         typesDisplay.setOnAction(event);
-
-        treasureIndex.setPromptText("Enter treasure index of existing monster");
-
-        addButton.setText("Add Treasure");
         addButton.setOnAction((ActionEvent ev) -> {
             /*React to add monster*/
             theController.reactToAddTreasure(selectedTreasure[0]);
         });
-        removeButton.setText("Remove Treasure");
         removeButton.setOnAction((ActionEvent ev) -> {
             /*React to remove monster*/
             if (theController.isInteger(treasureIndex.getText()) != 0) {
                 theController.reactToRemTreasure(Integer.parseInt(treasureIndex.getText().replaceAll("\\D", "")));
             }
         });
+
         addTreas.getChildren().add(typesDisplay);
         addTreas.getChildren().add(addButton);
         removeTreas.getChildren().add(treasureIndex);
@@ -469,26 +418,19 @@ public class Gui extends Application {
     public int openConfirm() {
         Stage newPop = new Stage();
         Scene newScene;
+        FlowPane newPane = createGeneralPane();
         Text confirmText = new Text();
-        Button confirmButton = new Button();
-        Button discardButton = new Button();
+        Button confirmButton = createGeneralButton("Save Edit");
+        Button discardButton = createGeneralButton("Discard Edit");
         HBox buttonBox = new HBox();
-        FlowPane newPane = new FlowPane();
         AtomicInteger success = new AtomicInteger();
 
         success.set(0);
-        newPane.setAlignment(Pos.CENTER);
-        newPane.setPadding(new Insets(20));
-        newPane.setHgap(20);
-        newPane.setVgap(10);
-
-        confirmButton.setText("Save Edit");
         confirmButton.setOnAction((ActionEvent ev) -> {
             /*React to remove monster*/
             success.set(1);
             newPop.close();
         });
-        discardButton.setText("Discard Edit");
         discardButton.setOnAction((ActionEvent ev) -> {
             /*React to remove monster*/
             success.set(0);
@@ -498,15 +440,50 @@ public class Gui extends Application {
 
         buttonBox.getChildren().add(confirmButton);
         buttonBox.getChildren().add(discardButton);
-
         newPane.getChildren().add(confirmText);
         newPane.getChildren().add(buttonBox);
-
         newScene = new Scene(newPane);
         newPop.setScene(newScene);
         newPop.showAndWait();
-
         return success.get();
+    }
+
+    /**
+     * Creates and returns a generalized flowpane.
+     * @return newPane general flowpane for use
+     */
+    public FlowPane createGeneralPane() {
+        FlowPane newPane = new FlowPane();
+
+        newPane.setAlignment(Pos.CENTER);
+        newPane.setPadding(new Insets(20));
+        newPane.setHgap(20);
+        newPane.setVgap(10);
+        return newPane;
+    }
+
+    /**
+     * Creates and returns a generalized button with associated label.
+     * @param label given string to label button with
+     * @return newButton generalized button with new label
+     */
+    public Button createGeneralButton(String label) {
+        Button newButton = new Button();
+
+        newButton.setText(label);
+        return newButton;
+    }
+
+    /**
+     * Creates and returns a generalized text field with associated label.
+     * @param label given string to label textfield with
+     * @return newField generalized textfield with new lavel
+     */
+    public TextField createGeneralTextF(String label) {
+        TextField newField = new TextField();
+
+        newField.setPromptText(label);
+        return newField;
     }
 
     /**
