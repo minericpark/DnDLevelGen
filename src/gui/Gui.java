@@ -281,6 +281,7 @@ public class Gui extends Application {
         newScene = new Scene(newPane);
         this.attachDefCSS(newScene);
         newPane.getStyleClass().addAll("editPop");
+        error.getStyleClass().addAll("message");
         newPop.setScene(newScene);
         newPop.show();
     }
@@ -310,7 +311,7 @@ public class Gui extends Application {
         newScene = new Scene(newPane);
         this.attachDefCSS(newScene);
         confirmButton.getStyleClass().addAll("subEditButton");
-        newPane.getStyleClass().addAll("editPop");
+        newPane.getStyleClass().addAll("passageNumAdd");
         newPop.setScene(newScene);
         newPop.showAndWait();
 
@@ -362,7 +363,7 @@ public class Gui extends Application {
         newPane.getChildren().add(removeMon);
         newScene = new Scene(newPane);
         this.attachDefCSS(newScene);
-        typesDisplay.getStyleClass().addAll("doorMenu");
+        typesDisplay.getStyleClass().addAll("itemMenu");
         addButton.getStyleClass().addAll("subEditButton");
         removeButton.getStyleClass().addAll("subEditButton");
         newPane.getStyleClass().addAll("editPop");
@@ -415,7 +416,7 @@ public class Gui extends Application {
         newPane.getChildren().add(removeTreas);
         newScene = new Scene(newPane);
         this.attachDefCSS(newScene);
-        typesDisplay.getStyleClass().addAll("doorMenu");
+        typesDisplay.getStyleClass().addAll("itemMenu");
         addButton.getStyleClass().addAll("subEditButton");
         removeButton.getStyleClass().addAll("subEditButton");
         newPane.getStyleClass().addAll("editPop");
@@ -460,6 +461,7 @@ public class Gui extends Application {
         confirmButton.getStyleClass().addAll("subEditButton");
         discardButton.getStyleClass().addAll("subEditButton");
         newPane.getStyleClass().addAll("editPop");
+        confirmText.getStyleClass().addAll("message");
         newPop.setScene(newScene);
         newPop.showAndWait();
         return success.get();

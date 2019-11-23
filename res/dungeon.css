@@ -21,6 +21,10 @@
     -fx-text-fill: #000000;
 }
 
+.message {
+    -fx-fill: #CFC84A;
+}
+
 .fileHandler {
 
 }
@@ -108,6 +112,29 @@
 }
 
 .subEditButton:hover {
+    -fx-background-color: linear-gradient(#3B2404, #45310E);
+    -fx-text-fill: #FBF4E6;
+}
+
+.passageNumAdd {
+    -fx-border-color: #615640;
+    -fx-border-style: solid;
+    -fx-border-width: 3;
+    -fx-control-inner-background: #BAA98A;
+    -fx-text-fill: #000000;
+}
+
+.itemMenu {
+    -fx-background-color: #3B2404;
+    -fx-text-fill: #FBF4E6;
+}
+
+.itemMenu .list-cell {
+    -fx-background-color: #3B2404;
+    -fx-text-fill: #CFC84A;
+}
+
+.itemMenu .list-cell:hover {
     -fx-background-color: linear-gradient(#3B2404, #45310E);
     -fx-text-fill: #FBF4E6;
 }
