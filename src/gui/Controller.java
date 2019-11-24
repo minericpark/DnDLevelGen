@@ -185,6 +185,7 @@ public class Controller {
                 fileOut.close();
             } catch (IOException i) {
                 System.out.println("Save failed");
+                System.out.println(i.getMessage());
             }
         }
     }
@@ -210,6 +211,7 @@ public class Controller {
                 reactToSpaceChange("Chamber 1");
             } catch (IOException i) {
                 System.out.println("Load failed");
+                System.out.println(i.getMessage());
             } catch (ClassNotFoundException c) {
                 System.out.println("Class not found");
             }

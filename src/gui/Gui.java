@@ -472,7 +472,7 @@ public class Gui extends Application {
      * @param givenScene provided scene to attach style sheet to
      */
     private void attachDefCSS(Scene givenScene) {
-        givenScene.getStylesheets().add((new File("res/dungeon.css")).toURI().toString());
+        givenScene.getStylesheets().add((new File("res/styleSheet.css")).toURI().toString());
     }
 
     /**
