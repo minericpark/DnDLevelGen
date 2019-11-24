@@ -335,7 +335,7 @@ public class Gui extends Application {
         ArrayList<String> monsterTypes = new ArrayList<>();
         final String[] selectedMonster = {""};
 
-        monsterTypes.addAll(theController.getMainLevel().listOfMonster());
+        monsterTypes.addAll(theController.getDataBaseMons());
         typesDisplay = new ComboBox(FXCollections.observableArrayList(monsterTypes));
         EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
             @Override

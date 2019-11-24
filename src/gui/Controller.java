@@ -17,6 +17,7 @@ public class Controller {
 
     private Gui mainGui;
     private Level mainLevel;
+    private DBConnection mainDatabase;
 
     /**
      * Constructor for Controller.
@@ -25,6 +26,7 @@ public class Controller {
     public Controller(Gui givenGui) {
         mainGui = givenGui;
         mainLevel = new Level();
+        mainDatabase = new DBConnection(DBDetails.username, DBDetails.password);
         /*System.out.println (mainLevel.getDescription());*/
     }
 
@@ -483,6 +485,19 @@ public class Controller {
         } else {
             return mainLevel.getPassages().get(index - 1).getDoors().size();
         }
+    }
+
+    public ArrayList<String> getDataBaseMons() {
+        ArrayList<String> dataMonst = new ArrayList<>();
+        int i;
+
+        for (i = 0; i < mainDatabase.getAllMonsters().size(); i++) {
+            String temp;
+            temp = mainDatabase.getAllMonsters().get(i);
+            dataMonst.add(temp);
+        }
+
+        return dataMonst;
     }
 
     /**
