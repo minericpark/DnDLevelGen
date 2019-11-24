@@ -1,5 +1,7 @@
 package gui;
 
+import db.DBConnection;
+import db.DBDetails;
 import epark.Level;
 import epark.Space;
 import javafx.stage.FileChooser;
@@ -531,10 +533,9 @@ public class Controller {
 
         for (i = 0; i < mainDatabase.getAllMonsters().size(); i++) {
             String temp;
-            temp = mainDatabase.getAllMonsters().get(i);
+            temp = mainDatabase.getAllMonsterNames().get(i);
             dataMonst.add(temp);
         }
-
         return dataMonst;
     }
 

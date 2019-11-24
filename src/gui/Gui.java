@@ -340,7 +340,7 @@ public class Gui extends Application {
         final String[] selectedExistMons = {""};
         int index;
 
-        monsterTypes.addAll(theController.getMainLevel().listOfMonster());
+        monsterTypes.addAll(theController.getDataBaseMons());
         typesDisplay = new ComboBox(FXCollections.observableArrayList(monsterTypes));
 
         if (!currentSpace.equals("null")) {

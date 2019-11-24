@@ -1,4 +1,4 @@
-package gui;
+package db;
 
 import java.util.ArrayList;
 import java.sql.*;
@@ -77,6 +77,41 @@ public class DBConnection {
         return mList;
     }
 
+    /**
+     * Returns a list of strings, where each string represents a full course. You will need to parse this string to rebuild the course
+     *
+     * @return List of Strings representing every available course
+     */
+    public ArrayList<String> getAllMonsterNames() {
+        ArrayList<String> mList = new ArrayList<String>();
+        String sql = "SELECT * FROM Monsters;";
+        connect();
+
+        try {
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                mList.add(rs.getString("name"));
+            }
+
+        }
+        //catch any issues along the way
+        catch (Exception e) {
+            System.out.println(e);
+        }
+        //close any/all connections
+        finally {
+            try {
+                stmt.close();
+                conn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return mList;
+    }
 
     public void addMonster(String name, String upper, String lower, String description) {
         String sql = "INSERT INTO Monsters(name,upper,lower,description) VALUES(" + "'" + name + "','" + upper + "','" + lower + "','" + description + "');";
