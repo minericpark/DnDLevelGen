@@ -293,15 +293,31 @@ public class PassageSection implements java.io.Serializable {
     /**
      * Removes monster imported from inputs of gui.
      *
-     * @param indexNum specified monster index number
+     * @param selectedMonster specifies monster to remove
      * @return 0-1, true or false dependent on if action has succeeded
      */
-    public int removeMonGui(int indexNum) {
-        if (passageMonsters.size() > indexNum) {
-            this.removeMonster(indexNum);
-            return 1;
-        } else {
+    public int removeMonGui(String selectedMonster) {
+        int monsIndex = 0;
+        int monsNotFound = 0;
+        int i;
+
+        for (i = 0; i < passageMonsters.size(); i++) {
+            if (selectedMonster.equals(passageMonsters.get(i).getDescription())) {
+                monsIndex = i;
+                break;
+            } else {
+                monsNotFound = 1;
+            }
+        }
+        if (monsNotFound == 1) {
             return 0;
+        } else {
+            if (passageMonsters.size() > monsIndex) {
+                this.removeMonster(monsIndex);
+                return 1;
+            } else {
+                return 0;
+            }
         }
     }
 

@@ -43,10 +43,6 @@ public class Controller {
      * @param selectedTreasure name of treasure selected for addition
      */
     public void reactToAddTreasure(String selectedTreasure) {
-        int givenSpace;
-        int givenTreasure;
-        int givenPS;
-
         if (mainGui.getCurrentSpace().contains("null")) {
             mainGui.openError();
         } else if (!selectedTreasure.equals("")) {
@@ -58,9 +54,9 @@ public class Controller {
                 }
                 reactToSpaceChange(mainGui.getCurrentSpace());
                 /*System.out.println(mainLevel.getDescription());*/
-            } else {
-                System.out.println("Add failed");
             }
+        } else {
+            mainGui.openError();
         }
     }
 
@@ -69,23 +65,20 @@ public class Controller {
      * @param selectedMonster name of monster selected for addition
      */
     public void reactToAddMonster(String selectedMonster) {
-        int givenSpace;
-        int givenMonster;
-        int givenPS;
         if (mainGui.getCurrentSpace().contains("null")) {
             mainGui.openError();
         } else if (!selectedMonster.equals("")) {
             if (mainGui.openConfirm() == 1) {
                 if (mainGui.getCurrentSpace().contains("Chamber")) {
-                    addChambMons(mainGui.getCurrentSpace(), selectedMonster);
+                    this.addChambMons(mainGui.getCurrentSpace(), selectedMonster);
                 } else {
-                    addPassMons(mainGui.getCurrentSpace(), selectedMonster);
+                    this.addPassMons(mainGui.getCurrentSpace(), selectedMonster);
                 }
-                reactToSpaceChange(mainGui.getCurrentSpace());
+                this.reactToSpaceChange(mainGui.getCurrentSpace());
                 /*System.out.println(mainLevel.getDescription());*/
-            } else {
-                System.out.println("Add failed");
             }
+        } else {
+            mainGui.openError();
         }
     }
 
@@ -94,10 +87,7 @@ public class Controller {
      * @param indexTreasure index of treasure selected for removal
      */
     public void reactToRemTreasure(int indexTreasure) {
-
-        int givenSpace;
-        int givenPS;
-
+        indexTreasure++;
         if (mainGui.getCurrentSpace().contains("null")) {
             mainGui.openError();
         } else if (indexTreasure != 0) {
@@ -108,36 +98,32 @@ public class Controller {
                     removePassTreas(mainGui.getCurrentSpace(), indexTreasure);
                 }
                 reactToSpaceChange(mainGui.getCurrentSpace());
-            } else {
-                System.out.println("Remove failed");
             }
         }
     }
 
     /**
      * Event handles removal of monster.
-     * @param indexMonster index of monster selected for removal
+     * @param selectedMonster string of selected monster to remove
      */
-    public void reactToRemMonster(int indexMonster) {
-        int givenSpace;
-        int givenMonster;
-        int givenPS;
-
+    public void reactToRemMonster(String selectedMonster) {
         if (mainGui.getCurrentSpace().contains("null")) {
             mainGui.openError();
-        } else if (indexMonster != 0) {
+        } else if (!selectedMonster.equals("")) {
             if (mainGui.openConfirm() == 1) {
                 if (mainGui.getCurrentSpace().contains("Chamber")) {
-                    removeChambMons(mainGui.getCurrentSpace(), indexMonster);
+                    this.removeChambMons(mainGui.getCurrentSpace(), selectedMonster);
                 } else {
-                    removePassMons(mainGui.getCurrentSpace(), indexMonster);
+                    this.removePassMons(mainGui.getCurrentSpace(), selectedMonster);
                 }
-                reactToSpaceChange(mainGui.getCurrentSpace());
-            } else {
-                System.out.println("Remove failed");
+                this.reactToSpaceChange(mainGui.getCurrentSpace());
             }
+        } else {
+            mainGui.openError();
         }
+
     }
+
 
     /**
      * Event handles changes when new space is selected to display.
@@ -230,7 +216,7 @@ public class Controller {
         int monsIndex;
         int spaceIndex;
 
-        spaceIndex = Integer.parseInt(givenSpace.replaceAll("\\D", ""));
+        spaceIndex = this.parseForIndex(givenSpace) + 1;
         monsIndex = (int) mainLevel.mapOfMonsters().get(selectedMons);
         if (mainLevel.getChambers().get(spaceIndex - 1).addMonGui(monsIndex) == 0) {
             mainGui.openError();
@@ -246,7 +232,7 @@ public class Controller {
         int spaceIndex;
         int treasIndex;
 
-        spaceIndex = Integer.parseInt(givenSpace.replaceAll("\\D", ""));
+        spaceIndex = this.parseForIndex(givenSpace) + 1;
         treasIndex = (int) mainLevel.mapOfTreasures().get(selectedTreas);
         if (mainLevel.getChambers().get(spaceIndex - 1).addTreasGui(treasIndex) == 0) {
             mainGui.openError();
@@ -256,13 +242,13 @@ public class Controller {
     /**
      * Removes provided monster from provided chamber.
      * @param givenSpace string name of given space
-     * @param monsIndex index of given treasure
+     * @param selectedMonster name of given monsters
      */
-    private void removeChambMons(String givenSpace, int monsIndex) {
+    private void removeChambMons(String givenSpace, String selectedMonster) {
         int spaceIndex;
 
-        spaceIndex = Integer.parseInt(givenSpace.replaceAll("\\D", ""));
-        if (mainLevel.getChambers().get(spaceIndex - 1).removeMonGui(monsIndex - 1) == 0) {
+        spaceIndex = this.parseForIndex(givenSpace) + 1;
+        if (mainLevel.getChambers().get(spaceIndex - 1).removeMonGui(selectedMonster) == 0) {
             mainGui.openError();
         }
     }
@@ -275,7 +261,7 @@ public class Controller {
     private void removeChambTreas(String givenSpace, int treasIndex) {
         int spaceIndex;
 
-        spaceIndex = Integer.parseInt(givenSpace.replaceAll("\\D", ""));
+        spaceIndex = this.parseForIndex(givenSpace) + 1;
         if (mainLevel.getChambers().get(spaceIndex - 1).removeTreasGui(treasIndex - 1) == 0) {
             mainGui.openError();
         }
@@ -291,7 +277,7 @@ public class Controller {
         int monsIndex;
         int givenPS;
 
-        spaceIndex = Integer.parseInt(givenSpace.replaceAll("\\D", ""));
+        spaceIndex = this.parseForIndex(givenSpace) + 1;
         monsIndex = (int) mainLevel.mapOfMonsters().get(selectedMons);
         /*Create popup*/
         givenPS = mainGui.openPSNum() - 1;
@@ -313,7 +299,7 @@ public class Controller {
         int treasIndex;
         int givenPS;
 
-        spaceIndex = Integer.parseInt(givenSpace.replaceAll("\\D", ""));
+        spaceIndex = this.parseForIndex(givenSpace) + 1;
         treasIndex = (int) mainLevel.mapOfTreasures().get(selectedTreas);
         /*Create popup*/
         givenPS = mainGui.openPSNum() - 1;
@@ -328,17 +314,19 @@ public class Controller {
     /**
      * Removes provided monster from provided passage.
      * @param givenSpace string name of given space
-     * @param monsIndex index of given monster
+     * @param givenMonster string name of given monster
      */
-    private void removePassMons(String givenSpace, int monsIndex) {
+    private void removePassMons(String givenSpace, String givenMonster) {
         int spaceIndex;
         int givenPS;
 
-        spaceIndex = Integer.parseInt(givenSpace.replaceAll("\\D", ""));
+        spaceIndex = this.parseForIndex(givenSpace) + 1;
         /*Create popup*/
         givenPS = mainGui.openPSNum() - 1;
-        if (givenPS < mainLevel.getPassages().get(spaceIndex - 1).getThePassage().size() && givenPS >= 0 && mainLevel.getPassages().get(spaceIndex - 1).getThePassage().get(givenPS).getMonsters().size() > monsIndex - 1) {
-            mainLevel.getPassages().get(spaceIndex - 1).getThePassage().get(givenPS).removeMonGui(monsIndex - 1);
+        if (givenPS < mainLevel.getPassages().get(spaceIndex - 1).getThePassage().size() && givenPS >= 0) {
+            if (mainLevel.getPassages().get(spaceIndex - 1).getThePassage().get(givenPS).removeMonGui(givenMonster) == 0) {
+                mainGui.openError();
+            }
         } else {
             mainGui.openError();
         }
@@ -354,7 +342,7 @@ public class Controller {
         int spaceIndex;
         int givenPS;
 
-        spaceIndex = Integer.parseInt(givenSpace.replaceAll("\\D", ""));
+        spaceIndex = this.parseForIndex(givenSpace) + 1;
         /*Create popup*/
         givenPS = mainGui.openPSNum() - 1;
         if (givenPS < mainLevel.getPassages().get(spaceIndex - 1).getThePassage().size() && givenPS >= 0 && mainLevel.getPassages().get(spaceIndex - 1).getThePassage().get(givenPS).getTreasures().size() > treasIndex - 1) {
@@ -363,6 +351,16 @@ public class Controller {
             mainGui.openError();
         }
         mainLevel.getPassages().get(spaceIndex - 1).updateDescription();
+    }
+
+    /**
+     * Parses an entire string for only it's integer.
+     * @param givenString provided string to parse
+     * @return string composed of only its integer
+     */
+    public int parseForIndex(String givenString) {
+        int index = Integer.parseInt(givenString.replaceAll("\\D", ""));
+        return (index - 1);
     }
 
     /**
@@ -455,6 +453,42 @@ public class Controller {
     }
 
     /**
+     * Creates and returns a arraylist of all chamber monsters of given index.
+     * @param spaceIndex provided index of chamber
+     * @return allMonsters arraylist of strings of existing monsters
+     */
+    public ArrayList<String> getAllChambMonsters(int spaceIndex) {
+        ArrayList<String> allMonsters = new ArrayList<String>();
+        int i;
+        for (i = 0; i < mainLevel.getChambers().get(spaceIndex).getMonsters().size(); i++) {
+            String temp;
+            temp = mainLevel.getChambers().get(spaceIndex).getMonsters().get(i).getDescription();
+            allMonsters.add(temp);
+        }
+        return allMonsters;
+    }
+
+    /**
+     * Creates and returns an arraylist of all passage monsters of given index.
+     * @param spaceIndex provided index of passage
+     * @return allMonsters arraylist of strings of existing monsters
+     */
+    public ArrayList<String> getAllPassMonsters(int spaceIndex) {
+        ArrayList<String> allMonsters = new ArrayList<String>();
+        int i;
+        int j;
+
+        for (j = 0; j < mainLevel.getPassages().get(spaceIndex).getThePassage().size(); j++) {
+            for (i = 0; i < mainLevel.getPassages().get(spaceIndex).getThePassage().get(j).getMonsters().size(); i++) {
+                String temp;
+                temp = mainLevel.getPassages().get(spaceIndex).getThePassage().get(j).getMonsters().get(i).getDescription();
+                allMonsters.add(temp);
+            }
+        }
+        return allMonsters;
+    }
+
+    /**
      * Creates and returns an arraylist of strings of all doors that exist.
      * @param newSpace name of space which method is receiving doors from
      * @return allDoors arraylist of names of doors of specified space
@@ -487,6 +521,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Returns all monsters that exist within database.
+     * @return dataMonst arraylist of strings of all database monsters
+     */
     public ArrayList<String> getDataBaseMons() {
         ArrayList<String> dataMonst = new ArrayList<>();
         int i;

@@ -333,16 +333,32 @@ public class Chamber extends epark.Space implements java.io.Serializable {
     /**
      * Removes monster imported from inputs of gui.
      *
-     * @param indexNum specified monster index number
+     * @param selectedMonster specified monster
      * @return 0-1, true or false dependent on if action has succeeded
      */
-    public int removeMonGui(int indexNum) {
-        if (chambMonsters.size() > indexNum) {
-            this.removeMonster(indexNum);
-            this.updateDescription();
-            return 1;
-        } else {
+    public int removeMonGui(String selectedMonster) {
+        int i;
+        int monsIndex = 0;
+        int monsNotFound = 0;
+        for (i = 0; i < chambMonsters.size(); i++) {
+            if (selectedMonster.equals(chambMonsters.get(i).getDescription())) {
+                monsNotFound = 0;
+                monsIndex = i;
+                break;
+            } else {
+                monsNotFound = 1;
+            }
+        }
+        if (monsNotFound == 1) {
             return 0;
+        } else {
+            if (chambMonsters.size() > monsIndex) {
+                this.removeMonster(monsIndex);
+                this.updateDescription();
+                return 1;
+            } else {
+                return 0;
+            }
         }
     }
 

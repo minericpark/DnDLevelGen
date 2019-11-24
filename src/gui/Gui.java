@@ -283,6 +283,7 @@ public class Gui extends Application {
         newPane.getStyleClass().addAll("editPop");
         error.getStyleClass().addAll("message");
         newPop.setScene(newScene);
+        newPop.setTitle("Error");
         newPop.show();
     }
 
@@ -313,6 +314,7 @@ public class Gui extends Application {
         confirmButton.getStyleClass().addAll("subEditButton");
         newPane.getStyleClass().addAll("passageNumAdd");
         newPop.setScene(newScene);
+        newPop.setTitle("Passage Section Number Input");
         newPop.showAndWait();
 
         return psNum.get();
@@ -329,41 +331,64 @@ public class Gui extends Application {
         VBox removeMon = new VBox();
         Button addButton = createGeneralButton("Add Monster");
         Button removeButton = createGeneralButton("Remove Monster");
-        TextField monsterIndex = createGeneralTextF("Enter monster index of existing monster"); /*Remove*/
         /*Dropdown of monster to add*/
         ComboBox<String> typesDisplay;
         ArrayList<String> monsterTypes = new ArrayList<>();
+        ComboBox<String> existingDisplay;
+        ArrayList<String> monstersInSpace = new ArrayList<>();
         final String[] selectedMonster = {""};
+        final String[] selectedExistMons = {""};
+        int index;
 
-        monsterTypes.addAll(theController.getDataBaseMons());
+        monsterTypes.addAll(theController.getMainLevel().listOfMonster());
         typesDisplay = new ComboBox(FXCollections.observableArrayList(monsterTypes));
+
+        if (!currentSpace.equals("null")) {
+            index = theController.parseForIndex(currentSpace);
+            if (currentSpace.contains("Chamber")) {
+                monstersInSpace.addAll(theController.getAllChambMonsters(index));
+            } else {
+                monstersInSpace.addAll(theController.getAllPassMonsters(index));
+            }
+        }
+        existingDisplay = new ComboBox(FXCollections.observableArrayList(monstersInSpace));
+
         EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 selectedMonster[0] = typesDisplay.getValue();
             }
         };
+        EventHandler<ActionEvent> event2 = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                selectedExistMons[0] = existingDisplay.getValue();
+            }
+        };
         typesDisplay.setOnAction(event);
+        existingDisplay.setOnAction(event2);
+
         addButton.setOnAction((ActionEvent ev) -> {
             /*React to add monster*/
             theController.reactToAddMonster(selectedMonster[0]);
+            newPop.close();
         });
         removeButton.setOnAction((ActionEvent ev) -> {
             /*React to remove monster*/
-            if (theController.isInteger(monsterIndex.getText()) != 0) {
-                theController.reactToRemMonster(Integer.parseInt(monsterIndex.getText().replaceAll("\\D", "")));
-            }
+            theController.reactToRemMonster(selectedExistMons[0]);
+            newPop.close();
         });
 
         addMon.getChildren().add(typesDisplay);
         addMon.getChildren().add(addButton);
-        removeMon.getChildren().add(monsterIndex);
+        removeMon.getChildren().add(existingDisplay);
         removeMon.getChildren().add(removeButton);
         newPane.getChildren().add(addMon);
         newPane.getChildren().add(removeMon);
         newScene = new Scene(newPane);
         this.attachDefCSS(newScene);
         typesDisplay.getStyleClass().addAll("itemMenu");
+        existingDisplay.getStyleClass().addAll("itemMenu");
         addButton.getStyleClass().addAll("subEditButton");
         removeButton.getStyleClass().addAll("subEditButton");
         newPane.getStyleClass().addAll("editPop");
@@ -400,11 +425,13 @@ public class Gui extends Application {
         addButton.setOnAction((ActionEvent ev) -> {
             /*React to add monster*/
             theController.reactToAddTreasure(selectedTreasure[0]);
+            newPop.close();
         });
         removeButton.setOnAction((ActionEvent ev) -> {
             /*React to remove monster*/
             if (theController.isInteger(treasureIndex.getText()) != 0) {
-                theController.reactToRemTreasure(Integer.parseInt(treasureIndex.getText().replaceAll("\\D", "")));
+                theController.reactToRemTreasure(theController.parseForIndex(treasureIndex.getText()));
+                newPop.close();
             }
         });
 
@@ -463,6 +490,7 @@ public class Gui extends Application {
         newPane.getStyleClass().addAll("editPop");
         confirmText.getStyleClass().addAll("message");
         newPop.setScene(newScene);
+        newPop.setTitle("Confirm Edits");
         newPop.showAndWait();
         return success.get();
     }
