@@ -306,6 +306,7 @@ public class PassageSection implements java.io.Serializable {
 
         for (i = 0; i < passageMonsters.size(); i++) {
             if (selectedMonster.equals(passageMonsters.get(i).getName())) {
+                monsNotFound = 0;
                 monsIndex = i;
                 break;
             } else {
@@ -485,7 +486,7 @@ public class PassageSection implements java.io.Serializable {
                 } catch (NotProtectedException e) { //Catch statement catches any NotProtectedExceptions
                     protectStatus = "nothing";
                 }
-                treasureDescrip = treasureDescrip.concat(indentString("The treasure is contained in " + this.passageTreasures.get(i).getContainer() + " and holds " + this.passageTreasures.get(i).getDescription() + ".\n"));
+                treasureDescrip = treasureDescrip.concat(indentString((i + 1) + ". The treasure is contained in " + this.passageTreasures.get(i).getContainer() + " and holds " + this.passageTreasures.get(i).getDescription() + ".\n"));
                 treasureDescrip = treasureDescrip.concat(indentString("The treasure is guarded by " + protectStatus + ".\n"));
             }
         }

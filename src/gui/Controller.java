@@ -526,7 +526,7 @@ public class Controller {
         DBConnection mainDatabase = new DBConnection();
         int i;
 
-        for (i = 0; i < mainDatabase.getAllMonsters().size(); i++) {
+        for (i = 0; i < mainDatabase.getAllMonsterNames().size(); i++) {
             String temp;
             temp = mainDatabase.getAllMonsterNames().get(i);
             dataMonst.add(temp);

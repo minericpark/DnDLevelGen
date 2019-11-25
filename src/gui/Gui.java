@@ -463,6 +463,34 @@ public class Gui extends Application {
         newPop.show();
     }
 
+    public void openDBEdit() {
+        Stage newPop = new Stage();
+        Scene newScene;
+        FlowPane newPane = createGeneralPane();
+        VBox addMon = new VBox();
+        VBox removeMon = new VBox();
+        Button addButton = createGeneralButton("Add Monster");
+        Button removeButton = createGeneralButton("Remove Monster");
+        /*Dropdown of monster to add*/
+        ComboBox<String> typesDisplay;
+        ArrayList<String> monsterTypes = new ArrayList<>();
+        ComboBox<String> existingDisplay;
+        ArrayList<String> monstersInSpace = new ArrayList<>();
+        final String[] selectedMonster = {""};
+        final String[] selectedExistMons = {""};
+        int index;
+
+        monsterTypes.addAll(theController.getDataBaseMons());
+        typesDisplay = new ComboBox(FXCollections.observableArrayList(monsterTypes));
+        EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                selectedMonster[0] = typesDisplay.getValue();
+            }
+        };
+        typesDisplay.setOnAction(event);
+    }
+
     /**
      * Creates popup confirming user's action, and returns 0/1 dependent on action.
      * @return 0/1, 0 for no and 1 for yes

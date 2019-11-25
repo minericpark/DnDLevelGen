@@ -173,7 +173,7 @@ public class DBConnection implements java.io.Serializable {
             while (rs.next()) {
                 monster.setName(rs.getString("name"));
                 monster.setUpperBound(rs.getString("upper"));
-                monster.setLowerBound("lower");
+                monster.setLowerBound(rs.getString("lower"));
                 monster.setDescription(rs.getString("description"));
             }
 
@@ -211,7 +211,7 @@ public class DBConnection implements java.io.Serializable {
             while (rs.next()) {
                 monster.setName(rs.getString("name"));
                 monster.setUpperBound(rs.getString("upper"));
-                monster.setLowerBound("lower");
+                monster.setLowerBound(rs.getString("lower"));
                 monster.setDescription(rs.getString("description"));
             }
 
