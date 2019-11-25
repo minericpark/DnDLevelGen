@@ -81,7 +81,7 @@ public class SetUpDB {
      * @param n username provided
      * @param p password provided
      */
-    public void setUpMonster(String n, String p) {
+    private void setUpMonster(String n, String p) {
         DBConnection mainConnect = new DBConnection(n, p);
 
         mainConnect.addMonster("Ant, giant", "4", "1", "Giant ants with hard shell plates");
@@ -100,7 +100,7 @@ public class SetUpDB {
         mainConnect.addMonster("Orc", "12", "7", "Smelly creatures with blunt teeth");
         mainConnect.addMonster("Piercer", "3", "1", "Large lobsters with incredibly sharp claws");
         mainConnect.addMonster("Rat, giant", "20", "5", "Giant rats with an infectious bite");
-        mainConnect.addMonster("Rot brug", "3", "1", "A slow humanoid that can explode with the force of a bomb");
+        mainConnect.addMonster("Rot grub", "3", "1", "A slow humanoid that can explode with the force of a bomb");
         mainConnect.addMonster("Shrieker", "4", "1", "Loud, ear-shrilling monsters");
         mainConnect.addMonster("Skeleton", "4", "1", "Undead beings that are enchanted with evil spirits");
         mainConnect.addMonster("Zombie", "3", "1", "Undead beings that ravaged a planet called Earth");

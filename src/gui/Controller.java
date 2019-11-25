@@ -1,8 +1,10 @@
 package gui;
 
 import db.DBConnection;
+import db.DBMonster;
 import epark.Level;
 import epark.Space;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -43,9 +45,9 @@ public class Controller {
      */
     public void reactToAddTreasure(String selectedTreasure) {
         if (mainGui.getCurrentSpace().contains("null")) {
-            mainGui.openError();
+            mainGui.openError(1);
         } else if (!selectedTreasure.equals("")) {
-            if (mainGui.openConfirm() == 1) {
+            if (mainGui.openConfirm(1) == 1) {
                 if (mainGui.getCurrentSpace().contains("Chamber")) {
                     addChambTreas(mainGui.getCurrentSpace(), selectedTreasure);
                 } else {
@@ -55,7 +57,7 @@ public class Controller {
                 /*System.out.println(mainLevel.getDescription());*/
             }
         } else {
-            mainGui.openError();
+            mainGui.openError(1);
         }
     }
 
@@ -65,9 +67,9 @@ public class Controller {
      */
     public void reactToAddMonster(String selectedMonster) {
         if (mainGui.getCurrentSpace().contains("null")) {
-            mainGui.openError();
+            mainGui.openError(1);
         } else if (!selectedMonster.equals("")) {
-            if (mainGui.openConfirm() == 1) {
+            if (mainGui.openConfirm(1) == 1) {
                 if (mainGui.getCurrentSpace().contains("Chamber")) {
                     this.addChambMons(mainGui.getCurrentSpace(), selectedMonster);
                 } else {
@@ -77,7 +79,7 @@ public class Controller {
                 /*System.out.println(mainLevel.getDescription());*/
             }
         } else {
-            mainGui.openError();
+            mainGui.openError(1);
         }
     }
 
@@ -88,9 +90,9 @@ public class Controller {
     public void reactToRemTreasure(int indexTreasure) {
         indexTreasure++;
         if (mainGui.getCurrentSpace().contains("null")) {
-            mainGui.openError();
+            mainGui.openError(1);
         } else if (indexTreasure != 0) {
-            if (mainGui.openConfirm() == 1) {
+            if (mainGui.openConfirm(1) == 1) {
                 if (mainGui.getCurrentSpace().contains("Chamber")) {
                     removeChambTreas(mainGui.getCurrentSpace(), indexTreasure);
                 } else {
@@ -107,9 +109,9 @@ public class Controller {
      */
     public void reactToRemMonster(String selectedMonster) {
         if (mainGui.getCurrentSpace().contains("null")) {
-            mainGui.openError();
+            mainGui.openError(1);
         } else if (!selectedMonster.equals("")) {
-            if (mainGui.openConfirm() == 1) {
+            if (mainGui.openConfirm(1) == 1) {
                 if (mainGui.getCurrentSpace().contains("Chamber")) {
                     this.removeChambMons(mainGui.getCurrentSpace(), selectedMonster);
                 } else {
@@ -118,7 +120,7 @@ public class Controller {
                 this.reactToSpaceChange(mainGui.getCurrentSpace());
             }
         } else {
-            mainGui.openError();
+            mainGui.openError(1);
         }
 
     }
@@ -213,6 +215,46 @@ public class Controller {
     }
 
     /**
+     * Event handles a database add monster request.
+     * @param monsterName name of new monster
+     * @param monsterUpper upper limit of new monster
+     * @param monsterLower lower limit of new monster
+     * @param monsterDescrip description of new monster
+     */
+    public void reactToDbAdd(String monsterName, String monsterUpper, String monsterLower, String monsterDescrip) {
+        DBConnection mainConnection = new DBConnection();
+        mainConnection.addMonster(monsterName, monsterUpper, monsterLower, monsterDescrip);
+    }
+
+    /**
+     * Event handles a database remove monster request.
+     * @param monsterName monster to remove
+     */
+    public void reactToDbRemove(String monsterName) {
+        DBConnection mainConnection = new DBConnection();
+        mainConnection.deleteMonster(monsterName);
+    }
+
+    /**
+     * Event handles a database modify monster request.
+     * @param monsterName name of previous monster
+     * @param newName name of new monster
+     * @param monsterUpper upper limit of new monster
+     * @param monsterLower lower limit of new monster
+     * @param monsterDescrip description of new monster
+     */
+    public void reactToDbModify(String monsterName, String newName, String monsterUpper, String monsterLower, String monsterDescrip) {
+        DBConnection mainConnection = new DBConnection();
+        DBMonster temp;
+        temp = mainConnection.findMonster(monsterName);
+        temp.setName(newName);
+        temp.setUpperBound(monsterUpper);
+        temp.setLowerBound(monsterLower);
+        temp.setDescription(monsterDescrip);
+        mainConnection.updateMonster(temp, monsterName);
+    }
+
+    /**
      * Adds provided monster into provided chamber.
      * @param givenSpace string name of given space
      * @param selectedMons string name of given monster
@@ -223,7 +265,7 @@ public class Controller {
 
         spaceIndex = this.parseForIndex(givenSpace) + 1;
         if (mainLevel.getChambers().get(spaceIndex - 1).addMonGui(selectedMons) == 0) {
-            mainGui.openError();
+            mainGui.openError(1);
         }
     }
 
@@ -239,7 +281,7 @@ public class Controller {
         spaceIndex = this.parseForIndex(givenSpace) + 1;
         treasIndex = (int) mainLevel.mapOfTreasures().get(selectedTreas);
         if (mainLevel.getChambers().get(spaceIndex - 1).addTreasGui(treasIndex) == 0) {
-            mainGui.openError();
+            mainGui.openError(1);
         }
     }
 
@@ -253,7 +295,7 @@ public class Controller {
 
         spaceIndex = this.parseForIndex(givenSpace) + 1;
         if (mainLevel.getChambers().get(spaceIndex - 1).removeMonGui(selectedMonster) == 0) {
-            mainGui.openError();
+            mainGui.openError(1);
         }
     }
 
@@ -267,7 +309,7 @@ public class Controller {
 
         spaceIndex = this.parseForIndex(givenSpace) + 1;
         if (mainLevel.getChambers().get(spaceIndex - 1).removeTreasGui(treasIndex - 1) == 0) {
-            mainGui.openError();
+            mainGui.openError(1);
         }
     }
 
@@ -286,7 +328,7 @@ public class Controller {
         if (givenPS < mainLevel.getPassages().get(spaceIndex - 1).getThePassage().size() && givenPS >= 0) {
             mainLevel.getPassages().get(spaceIndex - 1).getThePassage().get(givenPS).addMonGui(selectedMons);
         } else {
-            mainGui.openError();
+            mainGui.openError(1);
         }
         mainLevel.getPassages().get(spaceIndex - 1).updateDescription();
     }
@@ -308,7 +350,7 @@ public class Controller {
         if (givenPS < mainLevel.getPassages().get(spaceIndex - 1).getThePassage().size() && givenPS >= 0) {
             mainLevel.getPassages().get(spaceIndex - 1).getThePassage().get(givenPS).addTreasGui(treasIndex);
         } else {
-            mainGui.openError();
+            mainGui.openError(1);
         }
         mainLevel.getPassages().get(spaceIndex - 1).updateDescription();
     }
@@ -327,10 +369,10 @@ public class Controller {
         givenPS = mainGui.openPSNum() - 1;
         if (givenPS < mainLevel.getPassages().get(spaceIndex - 1).getThePassage().size() && givenPS >= 0) {
             if (mainLevel.getPassages().get(spaceIndex - 1).getThePassage().get(givenPS).removeMonGui(givenMonster) == 0) {
-                mainGui.openError();
+                mainGui.openError(1);
             }
         } else {
-            mainGui.openError();
+            mainGui.openError(1);
         }
         mainLevel.getPassages().get(spaceIndex - 1).updateDescription();
     }
@@ -350,9 +392,24 @@ public class Controller {
         if (givenPS < mainLevel.getPassages().get(spaceIndex - 1).getThePassage().size() && givenPS >= 0 && mainLevel.getPassages().get(spaceIndex - 1).getThePassage().get(givenPS).getTreasures().size() > treasIndex - 1) {
             mainLevel.getPassages().get(spaceIndex - 1).getThePassage().get(givenPS).removeTreasGui(treasIndex - 1);
         } else {
-            mainGui.openError();
+            mainGui.openError(1);
         }
         mainLevel.getPassages().get(spaceIndex - 1).updateDescription();
+    }
+
+    /**
+     * Method determins if monster exists within database.
+     * @param givenMonster provided monster
+     * @return 0/1 1 for true, 0 for false
+     */
+    public int monsterExist(String givenMonster) {
+        DBConnection mainConnection = new DBConnection();
+
+        if (mainConnection.findMonster(givenMonster).getName() == null) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 
     /**
@@ -539,6 +596,45 @@ public class Controller {
             dataMonst.add(temp);
         }
         return dataMonst;
+    }
+
+    /**
+     * Returns database description of given monster.
+     * @param monsterName provided monster
+     * @return temp.getDescription() description of database monster
+     */
+    public String getDbMonsDescrip(String monsterName) {
+        DBConnection mainConnection = new DBConnection();
+        DBMonster temp;
+
+        temp = mainConnection.findMonster(monsterName);
+        return temp.getDescription();
+    }
+
+    /**
+     * Returns database upper of given monster.
+     * @param monsterName provided monster
+     * @return temp.getUpper() upperbound of database monster
+     */
+    public String getDbMonsUpper(String monsterName) {
+        DBConnection mainConnection = new DBConnection();
+        DBMonster temp;
+
+        temp = mainConnection.findMonster(monsterName);
+        return temp.getUpper();
+    }
+
+    /**
+     * Returns database lower of given monster.
+     * @param monsterName provided monster
+     * @return temp.getLower() lowerbound of database monster
+     */
+    public String getDbMonsLower(String monsterName) {
+        DBConnection mainConnection = new DBConnection();
+        DBMonster temp;
+
+        temp = mainConnection.findMonster(monsterName);
+        return temp.getLower();
     }
 
     /**

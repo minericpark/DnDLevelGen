@@ -144,15 +144,15 @@ public class DBConnection implements java.io.Serializable {
     /**
      * Updates monster provided.
      *
-     * @param monster given monster to update
+     * @param monster updated monster info
+     * @param givenName given monster to update
      */
-    public void updateMonster(DBMonster monster) {
+    public void updateMonster(DBMonster monster, String givenName) {
         String name = monster.getName();
         String upper = monster.getUpper();
         String lower = monster.getLower();
         String description = monster.getDescription();
-        String sql = String.format("UPDATE Monsters set name = \"%s\", upper = \"%s\", lower = \"%s\", description = \"%s\" where name= \"%s\"", name, upper, lower, description, name);
-        System.out.println(sql);
+        String sql = String.format("UPDATE Monsters set name = \"%s\", upper = \"%s\", lower = \"%s\", description = \"%s\" where name= \"%s\"", name, upper, lower, description, givenName);
         dbUpdate(sql);
     }
 

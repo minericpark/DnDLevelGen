@@ -32,6 +32,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Gui extends Application {
 
@@ -286,8 +287,9 @@ public class Gui extends Application {
 
     /**
      * Opens error popup that occurs when user does something invalid.
+     * @param mode style used to display error message
      */
-    public void openError() {
+    public void openError(int mode) {
         Stage newPop = new Stage();
         Scene newScene;
         FlowPane newPane = createGeneralPane();
@@ -296,9 +298,11 @@ public class Gui extends Application {
         error.setText("Invalid request");
         newPane.getChildren().add(error);
         newScene = new Scene(newPane);
-        this.attachDefCSS(newScene);
-        newPane.getStyleClass().addAll("editPop");
-        error.getStyleClass().addAll("message");
+        if (mode == 1) {
+            this.attachDefCSS(newScene);
+            newPane.getStyleClass().addAll("editPop");
+            error.getStyleClass().addAll("message");
+        }
         newPop.setScene(newScene);
         newPop.setTitle("Error");
         newPop.show();
@@ -498,17 +502,39 @@ public class Gui extends Application {
         typesDisplay.setOnMouseClicked(event);
         addButton.setOnAction((ActionEvent ev) -> {
             /*React to add monster*/
-            /*Controller reacts to database mod*/
-            newPop.close();
+            String monsterName = this.openDBAdd();
+            if (!(monsterName == null)) {
+                monsterTypes.add(monsterName);
+                typesDisplay.getItems().add(monsterName);
+            }
         });
         removeButton.setOnAction((ActionEvent ev) -> {
             /*React to remove monster*/
-            /*Controller reacts to database remove*/
-            newPop.close();
+            if (selectedMonster[0].equals("") || theController.monsterExist(selectedMonster[0]) == 0) {
+                this.openError(0);
+            } else {
+                if (this.openConfirm(0) == 1) {
+                    theController.reactToDbRemove(selectedMonster[0]);
+                    monsterTypes.remove(selectedMonster[0]);
+                    typesDisplay.getItems().remove(selectedMonster[0]);
+                }
+            }
         });
         modifyButton.setOnAction((ActionEvent ev) -> {
             /*React to modify monster*/
-            newPop.close();
+            if (selectedMonster[0].equals("") || theController.monsterExist(selectedMonster[0]) == 0) {
+                this.openError(0);
+            } else {
+                String monsterName = this.openDBMod(selectedMonster[0]);
+                if (!(monsterName == null)) {
+                    monsterTypes.remove(selectedMonster[0]);
+                    typesDisplay.getItems().remove(selectedMonster[0]);
+                    monsterTypes.add(monsterName);
+                    typesDisplay.getItems().add(monsterName);
+                } else {
+                    this.openError(0);
+                }
+            }
         });
         dbList.getChildren().add(typesDisplay);
         dbList.setPadding(new Insets(10));
@@ -526,10 +552,88 @@ public class Gui extends Application {
     }
 
     /**
+     * Opens database add monster window.
+     * @return monsterName new monster imported
+     */
+    public String openDBAdd() {
+        Stage newPop = new Stage();
+        Scene newScene;
+        FlowPane newPane = createGeneralPane();
+        TextField monsterName = new TextField();
+        TextField monsterUpper = new TextField();
+        TextField monsterLower = new TextField();
+        TextField monsterDescription = new TextField();
+        VBox inputBox = new VBox();
+        Button confirmButton = createGeneralButton("Confirm");
+        AtomicReference<String> newMonster = new AtomicReference<>();
+
+        monsterName.setPromptText("Name of New Monster");
+        monsterUpper.setPromptText("Upper Limit of Spawning");
+        monsterLower.setPromptText("Lower Limit of Spawning");
+        monsterDescription.setPromptText("Description of New Monster");
+        confirmButton.setOnAction((ActionEvent ev) -> {
+            if (this.openConfirm(0) == 1) {
+                theController.reactToDbAdd(monsterName.getText(), monsterUpper.getText(), monsterLower.getText(), monsterDescription.getText());
+                newMonster.set(monsterName.getText());
+                newPop.close();
+            }
+        });
+        inputBox.getChildren().addAll(monsterName, monsterUpper, monsterLower, monsterDescription);
+        newPane.getChildren().addAll(inputBox, confirmButton);
+        newScene = new Scene(newPane);
+        newPop.setScene(newScene);
+        newPop.setTitle("New Monster for Database");
+        newPop.showAndWait();
+        return newMonster.get();
+    }
+
+    /**
+     * Opens database monster modification window.
+     * @param selectedMonster name of monster to modify
+     * @return monsterName updated monster name
+     */
+    public String openDBMod(String selectedMonster) {
+        Stage newPop = new Stage();
+        Scene newScene;
+        FlowPane newPane = createGeneralPane();
+        TextField monsterName = new TextField();
+        TextField monsterUpper = new TextField();
+        TextField monsterLower = new TextField();
+        TextField monsterDescription = new TextField();
+        VBox inputBox = new VBox();
+        Button confirmButton = createGeneralButton("Confirm");
+        AtomicReference<String> updatedMonster = new AtomicReference<>();
+
+        monsterName.setPromptText("Name of New Monster");
+        monsterName.setText(selectedMonster);
+        monsterUpper.setPromptText("Upper Limit of Spawning");
+        monsterUpper.setText(theController.getDbMonsUpper(selectedMonster));
+        monsterLower.setPromptText("Lower Limit of Spawning");
+        monsterLower.setText(theController.getDbMonsLower(selectedMonster));
+        monsterDescription.setPromptText("Description of New Monster");
+        monsterDescription.setText(theController.getDbMonsDescrip(selectedMonster));
+        confirmButton.setOnAction((ActionEvent ev) -> {
+            if (this.openConfirm(0) == 1) {
+                theController.reactToDbModify(selectedMonster, monsterName.getText(), monsterUpper.getText(), monsterLower.getText(), monsterDescription.getText());
+                updatedMonster.set(monsterName.getText());
+                newPop.close();
+            }
+        });
+        inputBox.getChildren().addAll(monsterName, monsterUpper, monsterLower, monsterDescription);
+        newPane.getChildren().addAll(inputBox, confirmButton);
+        newScene = new Scene(newPane);
+        newPop.setScene(newScene);
+        newPop.setTitle("New Monster for Database");
+        newPop.showAndWait();
+        return updatedMonster.get();
+    }
+
+    /**
      * Creates popup confirming user's action, and returns 0/1 dependent on action.
      * @return 0/1, 0 for no and 1 for yes
+     * @param mode type of style for window to display
      */
-    public int openConfirm() {
+    public int openConfirm(int mode) {
         Stage newPop = new Stage();
         Scene newScene;
         FlowPane newPane = createGeneralPane();
@@ -557,11 +661,13 @@ public class Gui extends Application {
         newPane.getChildren().add(confirmText);
         newPane.getChildren().add(buttonBox);
         newScene = new Scene(newPane);
-        this.attachDefCSS(newScene);
-        confirmButton.getStyleClass().addAll("subEditButton");
-        discardButton.getStyleClass().addAll("subEditButton");
-        newPane.getStyleClass().addAll("editPop");
-        confirmText.getStyleClass().addAll("message");
+        if (mode == 1) {
+            this.attachDefCSS(newScene);
+            confirmButton.getStyleClass().addAll("subEditButton");
+            discardButton.getStyleClass().addAll("subEditButton");
+            newPane.getStyleClass().addAll("editPop");
+            confirmText.getStyleClass().addAll("message");
+        }
         newPop.setScene(newScene);
         newPop.setTitle("Confirm Edits");
         newPop.showAndWait();
