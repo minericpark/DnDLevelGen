@@ -1,7 +1,6 @@
 package epark;
 
 import db.DBConnection;
-import db.DBDetails;
 import db.DBMonster;
 import dnd.die.D20;
 import dnd.die.Percentile;
@@ -15,10 +14,6 @@ import java.util.HashMap;
 
 public class PassageSection implements java.io.Serializable {
 
-    /**
-     * SQL Connection to database
-     */
-    private DBConnection mainConnection;
     /**
      * Represents the description of the passage section.
      */
@@ -69,7 +64,6 @@ public class PassageSection implements java.io.Serializable {
      * Initializes all required instances and calls all setup methods.
      */
     public PassageSection() {
-        mainConnection = new DBConnection(DBDetails.username, DBDetails.password);
         passageTable = new HashMap<Integer, String>();
         passageMonsters = new ArrayList<DBMonster>();
         passageTreasures = new ArrayList<Treasure>();
@@ -165,6 +159,7 @@ public class PassageSection implements java.io.Serializable {
      * Generates monster within passage section.
      */
     private void genMonster() {
+        DBConnection mainConnection = new DBConnection();
         DBMonster generatedMonster;
 
         this.setMonsterExist(true);
@@ -276,9 +271,10 @@ public class PassageSection implements java.io.Serializable {
      * @return 0-1, true of false dependent on if action has succeeded
      */
     public int addMonGui(String monsterName) {
+        DBConnection mainConnection = new DBConnection();
         DBMonster newMonster = new DBMonster();
         if (!monsterName.equals("null")) {
-            mainConnection.findMonster(monsterName);
+            newMonster = mainConnection.findMonster(monsterName);
             this.addMonster(newMonster);
             return 1;
         } else {

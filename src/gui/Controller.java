@@ -272,7 +272,6 @@ public class Controller {
      */
     private void addPassMons(String givenSpace, String selectedMons) {
         int spaceIndex;
-        int monsIndex;
         int givenPS;
 
         spaceIndex = this.parseForIndex(givenSpace) + 1;
