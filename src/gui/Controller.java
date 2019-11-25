@@ -1,7 +1,6 @@
 package gui;
 
 import db.DBConnection;
-import db.DBDetails;
 import epark.Level;
 import epark.Space;
 import javafx.stage.FileChooser;
@@ -19,7 +18,6 @@ public class Controller {
 
     private Gui mainGui;
     private Level mainLevel;
-    private DBConnection mainDatabase;
 
     /**
      * Constructor for Controller.
@@ -28,7 +26,6 @@ public class Controller {
     public Controller(Gui givenGui) {
         mainGui = givenGui;
         mainLevel = new Level();
-        mainDatabase = new DBConnection(DBDetails.username, DBDetails.password);
         /*System.out.println (mainLevel.getDescription());*/
     }
 
@@ -219,8 +216,7 @@ public class Controller {
         int spaceIndex;
 
         spaceIndex = this.parseForIndex(givenSpace) + 1;
-        monsIndex = (int) mainLevel.mapOfMonsters().get(selectedMons);
-        if (mainLevel.getChambers().get(spaceIndex - 1).addMonGui(monsIndex) == 0) {
+        if (mainLevel.getChambers().get(spaceIndex - 1).addMonGui(selectedMons) == 0) {
             mainGui.openError();
         }
     }
@@ -280,11 +276,10 @@ public class Controller {
         int givenPS;
 
         spaceIndex = this.parseForIndex(givenSpace) + 1;
-        monsIndex = (int) mainLevel.mapOfMonsters().get(selectedMons);
         /*Create popup*/
         givenPS = mainGui.openPSNum() - 1;
         if (givenPS < mainLevel.getPassages().get(spaceIndex - 1).getThePassage().size() && givenPS >= 0) {
-            mainLevel.getPassages().get(spaceIndex - 1).getThePassage().get(givenPS).addMonGui(monsIndex);
+            mainLevel.getPassages().get(spaceIndex - 1).getThePassage().get(givenPS).addMonGui(selectedMons);
         } else {
             mainGui.openError();
         }
@@ -464,7 +459,7 @@ public class Controller {
         int i;
         for (i = 0; i < mainLevel.getChambers().get(spaceIndex).getMonsters().size(); i++) {
             String temp;
-            temp = mainLevel.getChambers().get(spaceIndex).getMonsters().get(i).getDescription();
+            temp = mainLevel.getChambers().get(spaceIndex).getMonsters().get(i).getName();
             allMonsters.add(temp);
         }
         return allMonsters;
@@ -483,7 +478,7 @@ public class Controller {
         for (j = 0; j < mainLevel.getPassages().get(spaceIndex).getThePassage().size(); j++) {
             for (i = 0; i < mainLevel.getPassages().get(spaceIndex).getThePassage().get(j).getMonsters().size(); i++) {
                 String temp;
-                temp = mainLevel.getPassages().get(spaceIndex).getThePassage().get(j).getMonsters().get(i).getDescription();
+                temp = mainLevel.getPassages().get(spaceIndex).getThePassage().get(j).getMonsters().get(i).getName();
                 allMonsters.add(temp);
             }
         }
@@ -529,6 +524,7 @@ public class Controller {
      */
     public ArrayList<String> getDataBaseMons() {
         ArrayList<String> dataMonst = new ArrayList<>();
+        DBConnection mainDatabase = new DBConnection();
         int i;
 
         for (i = 0; i < mainDatabase.getAllMonsters().size(); i++) {

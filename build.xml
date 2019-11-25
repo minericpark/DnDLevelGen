@@ -19,6 +19,7 @@
   <property name="mysql" value="mysql-connector-java-8.0.13.jar"/>
   <property name="jar_file" value="gui.jar"/>
   <property name="main_class" value="gui.Launcher"/>
+  <property name="db_setup" value="db.SetUpDB"/>
   <property name="res_folder" value="res"/>
 
   <property environment="env"/>
@@ -131,6 +132,13 @@
     <classpath refid="libs.jars"/>
    </java>  
   </target>
+
+    <target name="runmeDB" depends="copy,compile"
+            description="Run Jar file">
+        <java classpath="${build}:${javafxlib}" classname="${db_setup}" fork="true">
+            <classpath refid="libs.jars"/>
+        </java>
+    </target>
   
     <target name="testos"
         description="Run Jar file">

@@ -1,9 +1,11 @@
 package epark;
 
+import db.DBConnection;
+import db.DBDetails;
+import db.DBMonster;
 import dnd.die.D20;
 import dnd.die.Percentile;
 import dnd.exceptions.NotProtectedException;
-import dnd.models.Monster;
 import dnd.models.Treasure;
 
 import java.util.ArrayList;
@@ -13,6 +15,10 @@ import java.util.HashMap;
 
 public class PassageSection implements java.io.Serializable {
 
+    /**
+     * SQL Connection to database
+     */
+    private DBConnection mainConnection;
     /**
      * Represents the description of the passage section.
      */
@@ -28,7 +34,7 @@ public class PassageSection implements java.io.Serializable {
     /**
      * Represents monsters within passage section (if it exists).
      */
-    private ArrayList<Monster> passageMonsters;
+    private ArrayList<DBMonster> passageMonsters;
     /**
      * Represents treasures within passage section (if it exists).
      */
@@ -63,8 +69,9 @@ public class PassageSection implements java.io.Serializable {
      * Initializes all required instances and calls all setup methods.
      */
     public PassageSection() {
+        mainConnection = new DBConnection(DBDetails.username, DBDetails.password);
         passageTable = new HashMap<Integer, String>();
-        passageMonsters = new ArrayList<Monster>();
+        passageMonsters = new ArrayList<DBMonster>();
         passageTreasures = new ArrayList<Treasure>();
         this.passageDescription = "";
         this.setUpDescription(" ");
@@ -82,7 +89,7 @@ public class PassageSection implements java.io.Serializable {
         //sets up a specific passage based on the values sent in from
         //modified table 1
         passageTable = new HashMap<Integer, String>();
-        passageMonsters = new ArrayList<Monster>();
+        passageMonsters = new ArrayList<DBMonster>();
         passageTreasures = new ArrayList<Treasure>();
         this.passageDescription = "";
         this.setUpDescription(description);
@@ -158,10 +165,10 @@ public class PassageSection implements java.io.Serializable {
      * Generates monster within passage section.
      */
     private void genMonster() {
-        Monster generatedMonster = new Monster();
+        DBMonster generatedMonster;
 
         this.setMonsterExist(true);
-        generatedMonster.setType(rollD100());
+        generatedMonster = mainConnection.randMonster();
         this.passageMonsters.add(generatedMonster);
     }
 
@@ -265,17 +272,17 @@ public class PassageSection implements java.io.Serializable {
     /**
      * Adds monster imported from inputs of gui.
      *
-     * @param indexNum number of monster type specified
+     * @param monsterName name of monster
      * @return 0-1, true of false dependent on if action has succeeded
      */
-    public int addMonGui(int indexNum) {
-        Monster newMonster = new Monster();
-        if (indexNum < 1 || indexNum > 100) {
-            return 0; /*Fail*/
-        } else {
-            newMonster.setType(indexNum);
+    public int addMonGui(String monsterName) {
+        DBMonster newMonster = new DBMonster();
+        if (!monsterName.equals("null")) {
+            mainConnection.findMonster(monsterName);
             this.addMonster(newMonster);
             return 1;
+        } else {
+            return 0;
         }
     }
 
@@ -284,7 +291,7 @@ public class PassageSection implements java.io.Serializable {
      *
      * @param newMonster new monster within passage section
      */
-    public void addMonster(Monster newMonster) {
+    public void addMonster(DBMonster newMonster) {
         this.passageMonsters.add(newMonster);
         this.monsterExist = true;
         this.updateDescription();
@@ -302,7 +309,7 @@ public class PassageSection implements java.io.Serializable {
         int i;
 
         for (i = 0; i < passageMonsters.size(); i++) {
-            if (selectedMonster.equals(passageMonsters.get(i).getDescription())) {
+            if (selectedMonster.equals(passageMonsters.get(i).getName())) {
                 monsIndex = i;
                 break;
             } else {
@@ -426,7 +433,7 @@ public class PassageSection implements java.io.Serializable {
      * @param num specified monster
      * @return passageMonster monster generated in passage section
      */
-    public Monster getMonster(int num) {
+    public DBMonster getMonster(int num) {
         //returns the monster that is in the passage section, if there is one
         return this.passageMonsters.get(num);
     }
@@ -436,7 +443,7 @@ public class PassageSection implements java.io.Serializable {
      *
      * @return passageMonster monster generated in passage section
      */
-    public ArrayList<Monster> getMonsters() {
+    public ArrayList<DBMonster> getMonsters() {
         return this.passageMonsters;
     }
 
@@ -452,8 +459,9 @@ public class PassageSection implements java.io.Serializable {
         if (this.passageMonsters.size() > 0) {
             monsterDescrip = monsterDescrip.concat("There is/are " + this.passageMonsters.size() + " potential monsters/types of monsters within the chamber.\n");
             for (i = 0; i < this.passageMonsters.size(); i++) {
-                monsterDescrip = monsterDescrip.concat(indentString((i + 1) + " The monster is/are a " + this.passageMonsters.get(i).getDescription() + "\n"));
-                monsterDescrip = monsterDescrip.concat(indentString("The amount of monsters potentially spawning is: " + this.passageMonsters.get(i).getMinNum() + " to " + this.passageMonsters.get(i).getMaxNum() + "\n"));
+                monsterDescrip = monsterDescrip.concat(indentString((i + 1) + ". The monster is/are a " + this.passageMonsters.get(i).getName() + "\n"));
+                monsterDescrip = monsterDescrip.concat(indentString("Description: " + this.passageMonsters.get(i).getDescription() + "\n"));
+                monsterDescrip = monsterDescrip.concat(indentString("The amount of monsters potentially spawning is: " + this.passageMonsters.get(i).getLower() + " to " + this.passageMonsters.get(i).getUpper() + "\n"));
             }
         }
         return monsterDescrip;

@@ -1,5 +1,7 @@
 package epark;
 
+import db.DBConnection;
+import db.DBMonster;
 import dnd.die.D20;
 import dnd.die.Percentile;
 import dnd.exceptions.NotProtectedException;
@@ -8,7 +10,6 @@ import dnd.models.ChamberContents;
 import dnd.models.ChamberShape;
 import dnd.models.Stairs;
 import dnd.models.Trap;
-import dnd.models.Monster;
 import dnd.models.Treasure;
 import dnd.models.Exit;
 
@@ -36,7 +37,7 @@ public class Chamber extends epark.Space implements java.io.Serializable {
     /**
      * Represents the monsters within chamber (if they exist).
      */
-    private ArrayList<Monster> chambMonsters;
+    private ArrayList<DBMonster> chambMonsters;
     /**
      * Represents the treasures within chamber (if they exist).
      */
@@ -94,7 +95,6 @@ public class Chamber extends epark.Space implements java.io.Serializable {
      * @param theContents chamber contents utilized to generate chamber
      */
     public Chamber(ChamberShape theShape, ChamberContents theContents) {
-
         this.mySize = theShape;
         this.myContents = theContents;
         this.initChamber();
@@ -126,7 +126,7 @@ public class Chamber extends epark.Space implements java.io.Serializable {
         this.chambDoors = new ArrayList<Door>();
         this.chambExits = new ArrayList<Exit>();
         this.chambTreasures = new ArrayList<Treasure>();
-        this.chambMonsters = new ArrayList<Monster>();
+        this.chambMonsters = new ArrayList<DBMonster>();
         this.chambID = rand.nextInt(1000);
     }
 
@@ -243,9 +243,9 @@ public class Chamber extends epark.Space implements java.io.Serializable {
      * Generates monster of chamber and adds into arraylist of monsters.
      */
     private void genMonster() {
-        Monster generatedMonster = new Monster();
-
-        generatedMonster.setType(rollD100());
+        DBConnection mainConnection = new DBConnection();
+        DBMonster generatedMonster;
+        generatedMonster = mainConnection.randMonster();
         this.addMonster(generatedMonster);
     }
 
@@ -306,18 +306,19 @@ public class Chamber extends epark.Space implements java.io.Serializable {
     /**
      * Adds monster imported from inputs of gui.
      *
-     * @param indexNum number of monster type specified
+     * @param monsterName name of monster
      * @return 0-1, true of false dependent on if action has succeeded
      */
-    public int addMonGui(int indexNum) {
-        Monster newMonster = new Monster();
-        if (indexNum < 1 || indexNum > 100) {
-            return 0; /*Fail*/
-        } else {
-            newMonster.setType(indexNum);
+    public int addMonGui(String monsterName) {
+        DBConnection mainConnection = new DBConnection();
+        DBMonster newMonster = new DBMonster();
+        if (!monsterName.equals("null")) {
+            newMonster = mainConnection.findMonster(monsterName);
             this.addMonster(newMonster);
             this.updateDescription();
             return 1;
+        } else {
+            return 0;
         }
     }
 
@@ -326,7 +327,7 @@ public class Chamber extends epark.Space implements java.io.Serializable {
      *
      * @param theMonster new monster imported to add into list of monsters of chamber
      */
-    public void addMonster(Monster theMonster) {
+    public void addMonster(DBMonster theMonster) {
         this.chambMonsters.add(theMonster);
     }
 
@@ -341,7 +342,7 @@ public class Chamber extends epark.Space implements java.io.Serializable {
         int monsIndex = 0;
         int monsNotFound = 0;
         for (i = 0; i < chambMonsters.size(); i++) {
-            if (selectedMonster.equals(chambMonsters.get(i).getDescription())) {
+            if (selectedMonster.equals(chambMonsters.get(i).getName())) {
                 monsNotFound = 0;
                 monsIndex = i;
                 break;
@@ -438,7 +439,7 @@ public class Chamber extends epark.Space implements java.io.Serializable {
      *
      * @return chambMonsters instance arraylist of all monsters within chamber
      */
-    public ArrayList<Monster> getMonsters() {
+    public ArrayList<DBMonster> getMonsters() {
         return this.chambMonsters;
     }
 
@@ -572,8 +573,9 @@ public class Chamber extends epark.Space implements java.io.Serializable {
         if (this.chambMonsters.size() > 0) {
             monsterDescrip = monsterDescrip.concat("There is/are " + this.chambMonsters.size() + " potential monsters/types of monsters within the chamber.\n");
             for (i = 0; i < this.chambMonsters.size(); i++) {
-                monsterDescrip = monsterDescrip.concat(indentString((i + 1) + ". The monster is/are a " + this.chambMonsters.get(i).getDescription() + "\n"));
-                monsterDescrip = monsterDescrip.concat(indentString("The amount of monsters of this type potentially spawning is: " + this.chambMonsters.get(i).getMinNum() + " to " + this.chambMonsters.get(i).getMaxNum() + "\n"));
+                monsterDescrip = monsterDescrip.concat(indentString((i + 1) + ". The monster is/are a " + this.chambMonsters.get(i).getName() + "\n"));
+                monsterDescrip = monsterDescrip.concat(indentString("Description: " + this.chambMonsters.get(i).getDescription() + "\n"));
+                monsterDescrip = monsterDescrip.concat(indentString("The amount of monsters of this type potentially spawning is: " + this.chambMonsters.get(i).getLower() + " to " + this.chambMonsters.get(i).getUpper() + "\n"));
             }
         }
         return monsterDescrip;

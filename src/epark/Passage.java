@@ -1,6 +1,6 @@
 package epark;
 
-import dnd.models.Monster;
+import db.DBMonster;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,7 +110,7 @@ public class Passage extends epark.Space implements java.io.Serializable {
      * @param newMonster monster to replace/add into passage section
      * @param i          number representing which passage section to add monster into
      */
-    public void addMonster(Monster newMonster, int i) {
+    public void addMonster(DBMonster newMonster, int i) {
         // adds a monster to section 'i' of the passage
         this.thePassage.get(i).addMonster(newMonster);
         this.updateDescription();
@@ -182,7 +182,7 @@ public class Passage extends epark.Space implements java.io.Serializable {
      * @param i number representing which passage section to get monster from
      * @return thePassage.get(i).getMonster(); command that calls the monster of the specified passage section
      */
-    public ArrayList<Monster> getMonsters(int i) {
+    public ArrayList<DBMonster> getMonsters(int i) {
         //returns Monster door in section 'i'. If there is no Monster, returns null
         return this.thePassage.get(i).getMonsters();
     }
