@@ -4,7 +4,6 @@ import db.DBConnection;
 import db.DBMonster;
 import epark.Level;
 import epark.Space;
-import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 
 import java.io.File;
