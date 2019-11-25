@@ -103,9 +103,9 @@ public class PassageSection implements java.io.Serializable {
         if (treasureExist) {
             this.passageDescription = this.passageDescription.concat(getTreasureDescrip());
         }
-        /*if (doorExist) {
-            this.passageDescription = this.passageDescription.concat(indentString("Passage Door ID: " + this.passageDoor.getDescription()));
-        }*/
+        if (doorExist) {
+            this.passageDescription = this.passageDescription.concat(indentString(this.getMiniDoorDescrip(passageDoor)));
+        }
     }
 
     /**
@@ -491,6 +491,14 @@ public class PassageSection implements java.io.Serializable {
             }
         }
         return treasureDescrip;
+    }
+
+    private String getMiniDoorDescrip(Door givenDoor) {
+        String miniDoorDescrip;
+
+        miniDoorDescrip = "Passage Door ID: " + givenDoor.getDoorID() + "\n";
+
+        return miniDoorDescrip;
     }
 
     /**

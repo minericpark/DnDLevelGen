@@ -89,18 +89,36 @@ public class Level implements java.io.Serializable {
      * @param givenDoor provided door to retrieve target chamber from
      * @return indexNum index number of chamber that door leads to
      */
-    public int nextSpaceIndex(Door givenDoor) {
-        Chamber tempChamb = new Chamber();
-        Door tempDoor = new Door();
+    public int nextChambIndex(Door givenDoor) {
         int i;
+        int j;
         int indexNum = 0;
         String spaceNum;
-        tempDoor = doorMatch.get(givenDoor);
-        tempChamb = doorConnection.get(tempDoor);
-        tempChamb.getID();
         for (i = 0; i < levelChambers.size(); i++) {
-            if (levelChambers.get(i).getID() == tempChamb.getID()) {
-                indexNum = i;
+            for (j = 0; j < levelChambers.get(i).getDoors().size(); j++) {
+                if (levelChambers.get(i).getDoors().get(j).getDoorID() == givenDoor.getDoorID()) {
+                    indexNum = i;
+                }
+            }
+        }
+        return (indexNum + 1);
+    }
+
+    /**
+     * Returns index of passage that door leads to.
+     *
+     * @param givenDoor provided door to retrieve target chamber from
+     * @return indexNum index number of passage that door leads to
+     */
+    public int nextPassIndex(Door givenDoor) {
+        int i;
+        int j;
+        int indexNum = 0;
+        for (i = 0; i < levelPassages.size(); i++) {
+            for (j = 0; j < levelPassages.get(i).getThePassage().size(); j++) {
+                if (levelPassages.get(i).getThePassage().get(j).getDoor().getDoorID() == givenDoor.getDoorID()) {
+                    indexNum = i;
+                }
             }
         }
         return (indexNum + 1);

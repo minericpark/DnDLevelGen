@@ -20,6 +20,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -109,6 +110,8 @@ public class Gui extends Application {
         MenuItem saveItem = new MenuItem("Save File");
         MenuItem loadItem = new MenuItem("Load File");
         MenuBar tempBar = new MenuBar();
+        Menu modDb = new Menu("Database");
+        MenuItem modButt = new MenuItem("Edit");
 
         saveItem.setOnAction((ActionEvent event) -> {
             theController.reactToFileSave();
@@ -116,10 +119,13 @@ public class Gui extends Application {
         loadItem.setOnAction((ActionEvent event) -> {
             theController.reactToFileLoad();
         });
+        modButt.setOnAction((ActionEvent event) -> {
+           theController.reactToDbEdit();
+        });
 
-        temp.getItems().add(saveItem);
-        temp.getItems().add(loadItem);
-        tempBar.getMenus().add(temp);
+        modDb.getItems().add(modButt);
+        temp.getItems().addAll(saveItem, loadItem);
+        tempBar.getMenus().addAll(temp, modDb);
 
         return tempBar;
     }
@@ -463,32 +469,60 @@ public class Gui extends Application {
         newPop.show();
     }
 
+    /**
+     * Opens database edit window.
+     */
     public void openDBEdit() {
         Stage newPop = new Stage();
         Scene newScene;
-        FlowPane newPane = createGeneralPane();
-        VBox addMon = new VBox();
-        VBox removeMon = new VBox();
-        Button addButton = createGeneralButton("Add Monster");
-        Button removeButton = createGeneralButton("Remove Monster");
+        BorderPane newPane = new BorderPane();
+        VBox dbList = new VBox();
+        VBox modifyBox = new VBox();
+        HBox addBox = new HBox();
+        Button addButton = createGeneralButton("Add");
+        Button removeButton = createGeneralButton("Remove");
+        Button modifyButton = createGeneralButton("Modify");
         /*Dropdown of monster to add*/
-        ComboBox<String> typesDisplay;
+        ListView<String> typesDisplay;
         ArrayList<String> monsterTypes = new ArrayList<>();
-        ComboBox<String> existingDisplay;
-        ArrayList<String> monstersInSpace = new ArrayList<>();
         final String[] selectedMonster = {""};
-        final String[] selectedExistMons = {""};
-        int index;
 
         monsterTypes.addAll(theController.getDataBaseMons());
-        typesDisplay = new ComboBox(FXCollections.observableArrayList(monsterTypes));
-        EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
+        typesDisplay = new ListView(FXCollections.observableArrayList(monsterTypes));
+        EventHandler<MouseEvent> event = new EventHandler<MouseEvent>() {
             @Override
-            public void handle(ActionEvent actionEvent) {
-                selectedMonster[0] = typesDisplay.getValue();
+            public void handle(MouseEvent mouseEvent) {
+                selectedMonster[0] = typesDisplay.getSelectionModel().getSelectedItem();
             }
         };
-        typesDisplay.setOnAction(event);
+        typesDisplay.setOnMouseClicked(event);
+        addButton.setOnAction((ActionEvent ev) -> {
+            /*React to add monster*/
+            /*Controller reacts to database mod*/
+            newPop.close();
+        });
+        removeButton.setOnAction((ActionEvent ev) -> {
+            /*React to remove monster*/
+            /*Controller reacts to database remove*/
+            newPop.close();
+        });
+        modifyButton.setOnAction((ActionEvent ev) -> {
+            /*React to modify monster*/
+            newPop.close();
+        });
+        dbList.getChildren().add(typesDisplay);
+        dbList.setPadding(new Insets(10));
+        modifyBox.getChildren().addAll(modifyButton, removeButton);
+        modifyBox.setPadding(new Insets(10));
+        addBox.getChildren().add(addButton);
+        addBox.setPadding(new Insets(10));
+        newPane.setLeft(dbList);
+        newPane.setRight(modifyBox);
+        newPane.setBottom(addBox);
+        newScene = new Scene(newPane);
+        newPop.setScene(newScene);
+        newPop.setTitle("Database Edit");
+        newPop.show();
     }
 
     /**

@@ -275,7 +275,7 @@ public class Chamber extends epark.Space implements java.io.Serializable {
     private void setUpDescription() {
         this.chambDescrip = this.getSizeDescrip();
         this.chambDescrip = this.chambDescrip.concat(getContents());
-        /*this.chambDescrip = this.chambDescrip.concat(getDoorDescrip());*/
+        this.chambDescrip = this.chambDescrip.concat(getMiniDoorDescrip());
     }
 
     /**
@@ -518,7 +518,6 @@ public class Chamber extends epark.Space implements java.io.Serializable {
      */
     private String getDoorDescrip() {
         int i;
-        int doorNo;
         String doorDescrip = "";
 
         if (this.chambDoors.size() > 0) {
@@ -529,6 +528,23 @@ public class Chamber extends epark.Space implements java.io.Serializable {
             }
         }
 
+        return doorDescrip;
+    }
+
+    /**
+     * Returns a mini description of the doors of chamber.
+     * @return doorDescrip mini string description of doors of chamber
+     */
+    private String getMiniDoorDescrip() {
+        int i;
+        String doorDescrip = "";
+
+        if (this.chambDoors.size() > 0) {
+            doorDescrip = doorDescrip.concat("There is/are " + this.chambDoors.size() + " doors within the chamber.\n");
+            for (i = 0; i < chambDoors.size(); i++) {
+                doorDescrip = doorDescrip.concat(indentString("Door " + (i + 1) + "- ID: " + this.chambDoors.get(i).getDoorID() + "\n"));
+            }
+        }
         return doorDescrip;
     }
 

@@ -123,7 +123,6 @@ public class Controller {
 
     }
 
-
     /**
      * Event handles changes when new space is selected to display.
      * @param newSpace name of new space
@@ -204,6 +203,13 @@ public class Controller {
             }
         }
         /*Implement better change when there is time*/
+    }
+
+    /**
+     * Event handles a database modification request.
+     */
+    public void reactToDbEdit() {
+        mainGui.openDBEdit();
     }
 
     /**
@@ -417,13 +423,14 @@ public class Controller {
         if (newSpace.contains("Chamber")) {
             /*Chamber*/
             textString = textString.concat(mainLevel.getChambers().get(spaceIndex - 1).getDoor(doorIndex - 1).getDescription());
-            spaceNum = mainLevel.nextSpaceIndex(mainLevel.getChambers().get(spaceIndex - 1).getDoor(doorIndex - 1));
+            spaceNum = mainLevel.nextPassIndex(mainLevel.getChambers().get(spaceIndex - 1).getDoor(doorIndex - 1));
+            textString = textString.concat("This door leads to Passage " + spaceNum);
         } else {
             /*Passage*/
             textString = textString.concat(mainLevel.getPassages().get(spaceIndex - 1).getDoor(doorIndex - 1).getDescription());
-            spaceNum = mainLevel.nextSpaceIndex(mainLevel.getPassages().get(spaceIndex - 1).getDoor(doorIndex - 1));
+            spaceNum = mainLevel.nextChambIndex(mainLevel.getPassages().get(spaceIndex - 1).getDoor(doorIndex - 1));
+            textString = textString.concat("This door leads to Chamber " + spaceNum);
         }
-        textString = textString.concat("This door leads to Chamber " + spaceNum);
         return textString;
     }
 

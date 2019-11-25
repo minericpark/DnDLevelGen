@@ -1,7 +1,7 @@
+/*GENERAL STYLES*/
 @font-face {
     src: url("fonts/runescape_uf.ttf");
 }
-
 
 .text {
     -fx-font-family: "RuneScape UF";
@@ -26,6 +26,7 @@
     -fx-fill: #CFC84A;
 }
 
+/*MENU STYLES*/
 .fileHandler {
 
 }
@@ -94,7 +95,7 @@
     -fx-text-fill: #FBF4E6;
 }
 
-
+/*BUTTON STYLES*/
 .editButton {
     -fx-background-color: linear-gradient(#45310E, #3B2404);
     -fx-font-weight: bold;
@@ -117,7 +118,7 @@
     -fx-text-fill: #FBF4E6;
 }
 
-
+/*OTHER STYLES*/
 .passageNumAdd {
     -fx-border-color: #615640;
     -fx-border-style: solid;
