@@ -2,6 +2,8 @@ Eric Minseo Park
 epark03@uoguelph.ca
 1001018
 
+Final Grade: 110
+
 Statement of Authenticity: This work is my own, handled on my own, and developed on my own.
 
 Run terminal within the file directory, and type 'ant runme' or 'ant runmeJava'.
